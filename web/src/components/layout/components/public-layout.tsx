@@ -16,10 +16,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { ArtBackdrop } from '@/components/art-backdrop'
+import { cn } from '@/lib/utils'
+
 import type { TopNavLink } from '../types'
 import { PublicHeader, type PublicHeaderProps } from './public-header'
 
 type PublicLayoutProps = {
+  title?: string
+  className?: string
   children: React.ReactNode
   showMainContainer?: boolean
   navContent?: React.ReactNode
@@ -34,7 +39,12 @@ type PublicLayoutProps = {
 
 export function PublicLayout(props: PublicLayoutProps) {
   return (
-    <div className='bg-background text-foreground relative min-h-svh overflow-x-clip'>
+    <div
+      className={cn(
+        'aelion-public bg-background text-foreground relative min-h-svh overflow-x-clip',
+        props.className
+      )}
+    >
       <PublicHeader
         navContent={props.navContent}
         navLinks={props.navLinks}
@@ -46,8 +56,17 @@ export function PublicLayout(props: PublicLayoutProps) {
         {...props.headerProps}
       />
 
+      {props.title && (
+        <header className='aelion-banner aelion-public-title'>
+          <ArtBackdrop priority />
+          <h1>{props.title}</h1>
+        </header>
+      )}
+
       {props.showMainContainer !== false ? (
-        <main className='container px-4 py-6 pt-20 md:px-4'>
+        <main
+          className={cn('container px-4 py-6 md:px-4', !props.title && 'pt-20')}
+        >
           {props.children}
         </main>
       ) : (

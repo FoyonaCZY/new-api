@@ -18,12 +18,14 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
 
+import { ArtBackdrop } from '@/components/art-backdrop'
 import { Button } from '@/components/ui/button'
 
 export function MaintenanceError() {
   const { t } = useTranslation()
   return (
-    <div className='h-svh'>
+    <div className='aelion-error'>
+      <ArtBackdrop priority />
       <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
         <h1 className='text-[7rem] leading-tight font-bold'>503</h1>
         <span className='font-medium'>

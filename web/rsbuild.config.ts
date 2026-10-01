@@ -53,6 +53,11 @@ export default defineConfig(({ envMode }) => {
       },
     },
     source: {
+      define: {
+        'import.meta.env.VITE_SITE_BRAND': JSON.stringify(
+          process.env.VITE_SITE_BRAND || env.rawPublicVars.VITE_SITE_BRAND || ''
+        ),
+      },
       entry: {
         index: './src/main.tsx',
       },

@@ -24,6 +24,8 @@ import {
   type ReactNode,
 } from 'react'
 
+import { ArtBackdrop } from '@/components/art-backdrop'
+
 import { Main } from './main'
 import { PageFooterProvider } from './page-footer'
 
@@ -81,7 +83,8 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
   return (
     <PageFooterProvider container={footerContainer}>
       <Main>
-        <div className='shrink-0 px-3 pt-3 pb-2.5 sm:px-4 sm:pt-5 sm:pb-3'>
+        <div className='aelion-banner aelion-page-heading shrink-0'>
+          <ArtBackdrop />
           {breadcrumb != null && (
             <div className='mb-2 sm:mb-3'>{breadcrumb}</div>
           )}
@@ -98,7 +101,7 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
               </h2>
             </div>
             {actions != null && (
-              <div className='flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-x-4'>
+              <div className='aelion-page-actions flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-x-4'>
                 {actions}
               </div>
             )}

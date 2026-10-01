@@ -1,0 +1,415 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+/* Aelion's operator design keeps New API's theme controls and project identity. */
+@layer base {
+  body:not([data-theme-preset]):not([data-theme-radius]) {
+    --radius: 0.375rem;
+  }
+  body:not([data-theme-preset]) {
+    --background: #f6f5f1;
+    --foreground: #222521;
+    --card: #fcfcf9;
+    --card-foreground: #222521;
+    --popover: #fcfcf9;
+    --popover-foreground: #222521;
+    --primary: #304fe6;
+    --primary-foreground: #fff;
+    --secondary: #eeeee8;
+    --secondary-foreground: #343c61;
+    --muted: #eeeee8;
+    --muted-foreground: #666b65;
+    --accent: #e7ebfc;
+    --accent-foreground: #253fae;
+    --border: #ddded7;
+    --input: #d2d5cc;
+    --ring: #304fe6;
+    --sidebar: #f1f1eb;
+    --sidebar-foreground: #222521;
+    --sidebar-primary: #304fe6;
+    --sidebar-primary-foreground: #fff;
+    --sidebar-accent: #e7ebfc;
+    --sidebar-accent-foreground: #253fae;
+    --sidebar-border: #ddded7;
+    --chart-1: #304fe6;
+    --chart-2: #7388cf;
+    --chart-3: #65877b;
+    --chart-4: #a37c55;
+    --chart-5: #8572a3;
+    --overview-accent-1: var(--chart-1);
+    --overview-accent-2: var(--chart-2);
+    --overview-accent-3: var(--chart-3);
+  }
+  .dark body:not([data-theme-preset]) {
+    --background: #191d22;
+    --foreground: #eceee8;
+    --card: #21262c;
+    --card-foreground: #eceee8;
+    --popover: #272d35;
+    --popover-foreground: #eceee8;
+    --primary: #a4b4ff;
+    --primary-foreground: #152353;
+    --secondary: #2b323c;
+    --secondary-foreground: #eceee8;
+    --muted: #2b323c;
+    --muted-foreground: #b0b7bf;
+    --accent: #2e3853;
+    --accent-foreground: #cad3ff;
+    --border: #3b424c;
+    --input: #4c5563;
+    --ring: #a4b4ff;
+    --sidebar: #171b20;
+    --sidebar-foreground: #eceee8;
+    --sidebar-primary: #a4b4ff;
+    --sidebar-primary-foreground: #152353;
+    --sidebar-accent: #2e3853;
+    --sidebar-accent-foreground: #cad3ff;
+    --sidebar-border: #3b424c;
+    --chart-1: #a4b4ff;
+    --chart-2: #8396d9;
+    --chart-3: #92b5a7;
+    --chart-4: #c8ab84;
+    --chart-5: #b9a4d4;
+  }
+}
+
+.aelion-brand-name {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.15;
+  gap: 0.2rem;
+}
+.aelion-project-name {
+  font-size: 0.625rem;
+  font-weight: 400;
+  opacity: 0.8;
+  letter-spacing: 0.02em;
+}
+.aelion-art-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: #133ac0;
+}
+.aelion-art-backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+  animation: aelion-art-enter 4s ease-out both;
+}
+.aelion-art-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #09277cb8, #09277c20 85%);
+}
+.aelion-banner {
+  position: relative;
+  isolation: isolate;
+  color: #fff;
+  background: #133ac0;
+}
+.aelion-page-heading {
+  padding: 2.5rem 1.5rem 1.5rem;
+  min-height: 9rem;
+  margin-bottom: 0.875rem;
+}
+.aelion-page-heading h2 {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  font-weight: 500;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.aelion-page-actions {
+  color: var(--foreground);
+  padding: 0.4rem;
+  background: var(--background);
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 12px #001a5e14;
+}
+.aelion-page-heading [data-slot='breadcrumb'] {
+  color: #fff;
+}
+.aelion-page-heading [data-slot='breadcrumb'] a {
+  color: #ffffffde;
+}
+.aelion-public-title {
+  min-height: 16rem;
+  padding: 4.5rem max(1.5rem, calc((100% - 1200px) / 2)) 2rem;
+  display: flex;
+  align-items: flex-end;
+}
+.aelion-public-title h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.aelion-public-title p {
+  color: #ffffffdb;
+}
+.aelion-public-content {
+  max-width: 1440px;
+  margin: auto;
+  padding: 2rem 1.5rem;
+}
+.aelion-public-header > div {
+  max-width: 1440px;
+}
+.aelion-public-header {
+  background: var(--background);
+}
+.aelion-home
+  .aelion-public-header[data-scrolled='false'][data-mobile-open='false'] {
+  color: #fff;
+  background: transparent;
+}
+.aelion-home
+  .aelion-public-header[data-scrolled='false'][data-mobile-open='false']
+  nav
+  :is(a, button, span) {
+  color: inherit;
+}
+.aelion-home
+  .aelion-public-header[data-scrolled='false'][data-mobile-open='false']
+  nav {
+  border-bottom: 1px solid #ffffff30;
+}
+.aelion-home
+  .aelion-public-header[data-scrolled='false'][data-mobile-open='false']
+  button:hover {
+  background: #ffffff20;
+}
+.aelion-hero {
+  min-height: min(850px, 100svh);
+  padding: 11rem max(1.5rem, calc((100% - 1200px) / 2)) 6rem;
+  display: flex;
+  align-items: center;
+}
+.aelion-hero h1 {
+  font-size: clamp(2.7rem, 5vw, 4.5rem);
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+}
+.aelion-hero-copy {
+  max-width: 42rem;
+  animation: aelion-copy-enter 0.65s ease-out both;
+}
+.aelion-hero-copy p {
+  max-width: 30rem;
+  margin-top: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.9;
+  color: #fff;
+}
+.aelion-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.aelion-hero-actions [data-slot='button'] {
+  min-height: 2.8rem;
+  padding-inline: 1.25rem;
+  border-radius: 0.375rem;
+  background: #fff;
+  color: #173aaa;
+  border: 1px solid #fff;
+}
+.aelion-hero-actions .aelion-hero-secondary {
+  background: #10319370;
+  color: #fff;
+  border-color: #ffffff70;
+}
+.aelion-providers {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem 3rem;
+  padding: 2.5rem 1.5rem;
+  max-width: 1248px;
+  margin: auto;
+  border-bottom: 1px solid var(--border);
+}
+.aelion-providers h2 {
+  margin-right: auto;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.aelion-providers span {
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+}
+.aelion-api-section {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 4rem;
+  align-items: center;
+  max-width: 1248px;
+  margin: auto;
+  padding: 5rem 1.5rem;
+}
+.aelion-api-section h2 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.aelion-api-section p {
+  margin-top: 1.25rem;
+  line-height: 1.85;
+  color: var(--muted-foreground);
+}
+.aelion-apps {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.aelion-apps a {
+  border: 1px solid var(--border);
+  padding: 0.6rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.8rem;
+}
+.aelion-auth {
+  min-height: 100svh;
+  height: auto;
+  grid-template-columns: minmax(0, 1fr) minmax(480px, 1fr);
+}
+.aelion-auth-art {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
+  background: #133ac0;
+}
+.aelion-auth > a {
+  position: fixed;
+  color: #fff;
+}
+.aelion-auth .aelion-auth-form {
+  min-width: 0;
+  padding: 3rem 1rem;
+}
+.aelion-auth-art .aelion-art-backdrop img {
+  object-position: 69% center;
+}
+.aelion-error {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  padding: 2rem 1.5rem;
+  color: #fff;
+}
+.aelion-error > div:not(.aelion-art-backdrop) {
+  min-height: calc(100svh - 4rem);
+}
+.aelion-error p {
+  color: #ffffffeb;
+}
+.aelion-error [data-slot='button'] {
+  background: var(--background);
+  color: var(--foreground);
+}
+@keyframes aelion-art-enter {
+  from {
+    transform: scale(1.045);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes aelion-copy-enter {
+  from {
+    opacity: 0.6;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 767px) {
+  .aelion-hero {
+    min-height: 760px;
+    min-height: min(850px, 100svh);
+    padding: 9rem 1.5rem 4rem;
+    align-items: flex-start;
+  }
+  .aelion-hero h1 {
+    font-size: clamp(2.25rem, 9vw, 3rem);
+  }
+  .aelion-hero-copy p {
+    font-size: 0.875rem;
+  }
+  .aelion-hero .aelion-art-backdrop img {
+    object-position: 64% center;
+  }
+  .aelion-art-backdrop::after {
+    background: linear-gradient(90deg, #09277cbe, #09277c50);
+  }
+  .aelion-api-section {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-block: 3rem;
+  }
+  .aelion-providers {
+    gap: 1.5rem 2rem;
+  }
+  .aelion-providers h2 {
+    flex-basis: 100%;
+  }
+  .aelion-page-heading {
+    min-height: 7rem;
+    padding: 1.5rem 0.875rem 1rem;
+  }
+  .aelion-page-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .aelion-public-title {
+    min-height: 13rem;
+    padding-top: 4rem;
+  }
+  .aelion-public-content {
+    padding: 1.25rem 0.875rem;
+  }
+  .aelion-auth {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 12rem 1fr;
+  }
+  .aelion-auth-art {
+    height: 12rem;
+    min-height: 0;
+  }
+  .aelion-auth > a {
+    position: absolute;
+  }
+  .aelion-auth .aelion-auth-form {
+    padding: 1rem 0 2rem;
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aelion-art-backdrop img,
+  .aelion-hero-copy {
+    animation: none;
+  }
+}

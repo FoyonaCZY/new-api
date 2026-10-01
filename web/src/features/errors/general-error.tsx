@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useNavigate, useRouter } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
+import { ArtBackdrop } from '@/components/art-backdrop'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
@@ -55,7 +56,8 @@ export function GeneralError({
     : t('Please try again later.')
 
   return (
-    <div className={cn('h-svh w-full', className)}>
+    <div className={cn('aelion-error w-full', className)}>
+      <ArtBackdrop priority />
       <div className='m-auto flex h-full w-full flex-col items-center justify-center gap-2'>
         {!minimal && (
           <h1 className='text-[7rem] leading-tight font-bold'>

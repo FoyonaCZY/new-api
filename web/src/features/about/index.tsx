@@ -127,7 +127,7 @@ export function About() {
 
   if (isLoading) {
     return (
-      <PublicLayout>
+      <PublicLayout title={t('About')}>
         <div className='mx-auto flex max-w-4xl flex-col gap-4 py-12'>
           <Skeleton className='h-8 w-[45%]' />
           <Skeleton className='h-4 w-full' />
@@ -140,7 +140,7 @@ export function About() {
 
   if (!hasContent) {
     return (
-      <PublicLayout>
+      <PublicLayout title={t('About')}>
         <EmptyAboutState />
       </PublicLayout>
     )
@@ -173,7 +173,7 @@ export function About() {
   }
 
   return (
-    <PublicLayout>
+    <PublicLayout title={t('About')}>
       <div className='mx-auto max-w-6xl px-4 py-8'>
         <RichContent
           mode='markdown'
