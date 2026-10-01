@@ -16,11 +16,18 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRouter,
+  RouterContextProvider,
+} from '@tanstack/react-router'
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
+import { PageArtBackdrop } from '@/components/art-backdrop'
 import { SiteBrandName } from '@/components/site-brand-name'
 import { Button } from '@/components/ui/button'
 
@@ -31,23 +38,55 @@ afterEach(() => vi.unstubAllEnvs())
 
 function PageFixture() {
   const [count, setCount] = useState(0)
+  const [router] = useState(() =>
+    createRouter({
+      routeTree: createRootRoute(),
+      history: createMemoryHistory({ initialEntries: ['/dashboard'] }),
+    })
+  )
   return (
-    <SectionPageLayout fixedContent stackActionsOnMobile>
-      <SectionPageLayout.Title>Requests</SectionPageLayout.Title>
-      <SectionPageLayout.Actions>
-        <Button onClick={() => setCount(count + 1)}>Refresh</Button>
-      </SectionPageLayout.Actions>
-      <SectionPageLayout.Content>
-        <output aria-label='Refresh count'>{count}</output>
-        <PageFooterPortal>
-          <Button>Next page</Button>
-        </PageFooterPortal>
-      </SectionPageLayout.Content>
-    </SectionPageLayout>
+    <RouterContextProvider router={router}>
+      <SectionPageLayout fixedContent stackActionsOnMobile>
+        <SectionPageLayout.Title>Requests</SectionPageLayout.Title>
+        <SectionPageLayout.Actions>
+          <Button onClick={() => setCount(count + 1)}>Refresh</Button>
+        </SectionPageLayout.Actions>
+        <SectionPageLayout.Content>
+          <output aria-label='Refresh count'>{count}</output>
+          <PageFooterPortal>
+            <Button>Next page</Button>
+          </PageFooterPortal>
+        </SectionPageLayout.Content>
+      </SectionPageLayout>
+    </RouterContextProvider>
   )
 }
 
 describe('shared page layout', () => {
+  it.each([
+    ['/dashboard/overview', 'atlas'],
+    ['/pricing', 'athena'],
+    ['/keys', 'hermes'],
+    ['/channels', 'hermes'],
+    ['/system-settings/site', 'temple'],
+  ])('uses a complete panoramic illustration for %s', (pathname, scene) => {
+    const router = createRouter({
+      routeTree: createRootRoute(),
+      history: createMemoryHistory({ initialEntries: [pathname] }),
+    })
+    const { container } = render(
+      <RouterContextProvider router={router}>
+        <PageArtBackdrop />
+      </RouterContextProvider>
+    )
+    const artwork = container.querySelector('img')
+    expect(artwork).toHaveAttribute('src', `/images/aelion-banner-${scene}.png`)
+    expect(artwork).toHaveAttribute('width', '2172')
+    expect(artwork).toHaveAttribute('height', '724')
+    expect(artwork).toHaveAttribute('alt', '')
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
   it('keeps page actions and content interactive with the decorative heading', () => {
     render(<PageFixture />)
     expect(screen.getByRole('heading', { name: 'Requests' })).toBeVisible()

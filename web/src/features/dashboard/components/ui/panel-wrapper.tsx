@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 
@@ -42,7 +43,7 @@ function PanelHeader(props: {
 }) {
   const heading = (
     <div className='flex flex-col gap-1'>
-      <h3 className='font-serif text-xl tracking-tight'>{props.title}</h3>
+      <h3 className='text-lg font-medium tracking-tight'>{props.title}</h3>
       {props.description != null && (
         <div className='text-muted-foreground text-xs'>{props.description}</div>
       )}
@@ -50,7 +51,7 @@ function PanelHeader(props: {
   )
 
   return (
-    <div className='border-b py-4'>
+    <div className='pb-5'>
       {props.actions != null ? (
         <div className='flex items-start justify-between gap-2'>
           {heading}
@@ -67,22 +68,25 @@ export function PanelWrapper(props: PanelWrapperProps) {
   const { t } = useTranslation()
   const resolvedEmptyMessage = props.emptyMessage ?? t('No data available')
   const height = props.height ?? 'h-64'
-  const frameClassName = cn('min-w-0 overflow-hidden border-t', props.className)
+  const frameClassName = cn(
+    'min-w-0 gap-0 overflow-hidden rounded-lg border-0 p-5 shadow-none sm:p-6',
+    props.className
+  )
 
   if (props.loading) {
     return (
-      <div className={frameClassName}>
+      <Card className={frameClassName}>
         <PanelHeader title={props.title} description={props.description} />
         <div className={cn('py-4', props.contentClassName)}>
           <Skeleton className={`w-full ${height}`} />
         </div>
-      </div>
+      </Card>
     )
   }
 
   if (props.empty) {
     return (
-      <div className={frameClassName}>
+      <Card className={frameClassName}>
         <PanelHeader title={props.title} description={props.description} />
         <div
           className={cn(
@@ -93,18 +97,18 @@ export function PanelWrapper(props: PanelWrapperProps) {
         >
           {resolvedEmptyMessage}
         </div>
-      </div>
+      </Card>
     )
   }
 
   return (
-    <div className={frameClassName}>
+    <Card className={frameClassName}>
       <PanelHeader
         title={props.title}
         description={props.description}
         actions={props.headerActions}
       />
       <div className={cn('py-4', props.contentClassName)}>{props.children}</div>
-    </div>
+    </Card>
   )
 }

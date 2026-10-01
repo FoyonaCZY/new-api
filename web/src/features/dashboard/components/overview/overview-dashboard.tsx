@@ -519,14 +519,14 @@ export function OverviewDashboard() {
         )}
       </SectionPageLayout.Actions>
       <SectionPageLayout.Content>
-        <div className='flex flex-col gap-8'>
+        <div className='flex flex-col gap-6 py-3'>
           <SummaryCards />
           <div id={setupGuideId} hidden={!setupGuideExpanded}>
             {setupGuideExpanded && (
-              <CardStaggerContainer className='border-y'>
-                <CardStaggerItem className='py-6 sm:py-8'>
+              <CardStaggerContainer className='bg-card rounded-lg px-5 sm:px-6'>
+                <CardStaggerItem className='py-5 sm:py-6'>
                   <div className='mb-6 flex flex-wrap items-center justify-between gap-3'>
-                    <h3 className='font-serif text-2xl tracking-tight'>
+                    <h3 className='text-lg font-medium tracking-tight'>
                       {t('Setup guide')}
                     </h3>
                     <div className='flex flex-wrap items-center gap-2'>
@@ -565,7 +565,7 @@ export function OverviewDashboard() {
                   </div>
                 </CardStaggerItem>
 
-                <CardStaggerItem className='border-t py-4'>
+                <CardStaggerItem className='pb-5 sm:pb-6'>
                   <div className='grid gap-3 lg:grid-cols-[minmax(0,0.45fr)_minmax(0,1.55fr)]'>
                     <h3 className='text-muted-foreground pt-3 text-xs font-medium'>
                       {t('Recommended actions')}
@@ -582,7 +582,7 @@ export function OverviewDashboard() {
           </div>
           {!setupGuideExpanded && !setupComplete && (
             <CardStaggerContainer>
-              <CardStaggerItem className='border-y py-4'>
+              <CardStaggerItem className='bg-card rounded-lg p-5 sm:p-6'>
                 <div className='flex flex-wrap items-center justify-between gap-3'>
                   <div className='min-w-0'>
                     <div className='min-w-0'>
@@ -624,7 +624,7 @@ export function OverviewDashboard() {
           {showContentPanels && (
             <CardStaggerContainer
               className={cn(
-                'grid grid-cols-1 gap-8',
+                'grid grid-cols-1 gap-5',
                 showLeftContentPanels &&
                   showUptimePanel &&
                   'xl:grid-cols-[minmax(0,1fr)_22rem]'
@@ -633,7 +633,7 @@ export function OverviewDashboard() {
               {showLeftContentPanels && (
                 <div
                   className={cn(
-                    'grid min-w-0 grid-cols-1 gap-8',
+                    'grid min-w-0 grid-cols-1 gap-5',
                     (showApiInfoPanel ||
                       showAnnouncementsPanel ||
                       showFAQPanel) &&

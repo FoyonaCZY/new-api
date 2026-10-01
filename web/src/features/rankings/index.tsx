@@ -19,7 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
-import { ArtBackdrop } from '@/components/art-backdrop'
+import { PageArtBackdrop } from '@/components/art-backdrop'
 import { PublicLayout } from '@/components/layout'
 import { PageTransition } from '@/components/page-transition'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -92,7 +92,7 @@ export function Rankings() {
     <PublicLayout showMainContainer={false}>
       <div className='relative'>
         <header className='aelion-banner aelion-public-title pt-24'>
-          <ArtBackdrop priority />
+          <PageArtBackdrop priority />
           <h1>{t('Rankings')}</h1>
         </header>
         <PageTransition className='aelion-public-content relative space-y-8'>

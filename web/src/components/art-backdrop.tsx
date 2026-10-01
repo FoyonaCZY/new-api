@@ -16,24 +16,71 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { useRouterState } from '@tanstack/react-router'
+
 import { cn } from '@/lib/utils'
 
+type ArtworkScene = 'atlas' | 'hermes' | 'athena' | 'temple'
+
 /** Shared decorative surface; never changes document or keyboard order. */
-export function ArtBackdrop(props: { className?: string; priority?: boolean }) {
+export function ArtBackdrop(props: {
+  className?: string
+  priority?: boolean
+  scene?: ArtworkScene
+}) {
   return (
     <div
       aria-hidden='true'
-      className={cn('aelion-art-backdrop', props.className)}
+      className={cn(
+        'aelion-art-backdrop',
+        props.scene && 'aelion-art-panorama',
+        props.className
+      )}
     >
       <img
-        src='/images/aelion-classical.png'
+        src={
+          props.scene
+            ? `/images/aelion-banner-${props.scene}.png`
+            : '/images/aelion-classical.png'
+        }
         alt=''
-        width={1672}
-        height={941}
+        width={props.scene ? 2172 : 1672}
+        height={props.scene ? 724 : 941}
         loading={props.priority ? 'eager' : 'lazy'}
         fetchPriority={props.priority ? 'high' : 'auto'}
         decoding='async'
       />
     </div>
   )
+}
+
+/** Select a consistent illustration for each page family without affecting its content. */
+export function PageArtBackdrop(props: { priority?: boolean }) {
+  const section = useRouterState({
+    select: (state) => state.location.pathname.split('/')[1],
+  })
+  let scene: ArtworkScene = 'temple'
+  switch (section) {
+    case 'dashboard':
+    case 'usage-logs':
+    case 'system-info':
+      scene = 'atlas'
+      break
+    case 'pricing':
+    case 'models':
+    case 'rankings':
+    case 'playground':
+    case 'chat':
+      scene = 'athena'
+      break
+    case 'channels':
+    case 'keys':
+    case 'task-plugins':
+    case 'wallet':
+    case 'subscriptions':
+    case 'redemption-codes':
+      scene = 'hermes'
+      break
+  }
+  return <ArtBackdrop scene={scene} priority={props.priority} />
 }

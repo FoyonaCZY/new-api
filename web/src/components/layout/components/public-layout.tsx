@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { ArtBackdrop } from '@/components/art-backdrop'
+import { PageArtBackdrop } from '@/components/art-backdrop'
 import { cn } from '@/lib/utils'
 
 import type { TopNavLink } from '../types'
@@ -58,7 +58,7 @@ export function PublicLayout(props: PublicLayoutProps) {
 
       {props.title && (
         <header className='aelion-banner aelion-public-title'>
-          <ArtBackdrop priority />
+          <PageArtBackdrop priority />
           <h1>{props.title}</h1>
         </header>
       )}

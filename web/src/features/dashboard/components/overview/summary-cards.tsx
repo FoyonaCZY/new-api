@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next'
 
 import { StaggerContainer, StaggerItem } from '@/components/page-transition'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { getUserQuotaDates } from '@/features/dashboard/api'
 import { useSummaryCardsConfig } from '@/features/dashboard/hooks/use-dashboard-config'
 import type { QuotaDataItem } from '@/features/dashboard/types'
@@ -253,10 +254,10 @@ export function SummaryCards() {
   })
 
   return (
-    <section aria-label={t('Usage')} className='border-b pb-6 sm:pb-8'>
-      <h3 className='mb-6 font-serif text-2xl tracking-tight'>{t('Usage')}</h3>
-      <div className='grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,2.15fr)] xl:gap-10'>
-        <div className='flex min-w-0 flex-col justify-between gap-5 border-b pb-6 xl:border-r xl:border-b-0 xl:pr-10 xl:pb-0'>
+    <section aria-label={t('Usage')}>
+      <h3 className='mb-4 text-lg font-medium tracking-tight'>{t('Usage')}</h3>
+      <div className='grid gap-4 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,2.15fr)]'>
+        <Card className='bg-primary/6 flex min-w-0 flex-col justify-between gap-5 rounded-lg border-0 p-5 shadow-none sm:p-6'>
           <div>
             <div className='flex flex-wrap items-center justify-between gap-3'>
               <span className='text-muted-foreground text-xs font-medium'>
@@ -294,25 +295,24 @@ export function SummaryCards() {
               <ArrowRight data-icon='inline-end' />
             </Button>
           </div>
-        </div>
+        </Card>
 
         <div className='min-w-0'>
-          <StaggerContainer className='divide-border/70 grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
+          <StaggerContainer className='grid h-full grid-cols-1 gap-4 sm:grid-cols-3'>
             {items.map((it) => (
-              <StaggerItem
-                key={it.key}
-                className='min-w-0 py-4 first:pt-0 last:pb-0 sm:px-5 sm:py-0 sm:first:pl-0 sm:last:pr-0'
-              >
-                <StatCard
-                  title={it.title}
-                  value={it.value}
-                  description={it.desc}
-                  icon={it.icon}
-                  tone={it.tone}
-                  sparkline={it.sparkline}
-                  sparklineVariant={it.sparklineVariant}
-                  loading={loading}
-                />
+              <StaggerItem key={it.key} className='min-w-0'>
+                <Card className='h-full gap-0 rounded-lg border-0 p-5 shadow-none sm:p-6'>
+                  <StatCard
+                    title={it.title}
+                    value={it.value}
+                    description={it.desc}
+                    icon={it.icon}
+                    tone={it.tone}
+                    sparkline={it.sparkline}
+                    sparklineVariant={it.sparklineVariant}
+                    loading={loading}
+                  />
+                </Card>
               </StaggerItem>
             ))}
           </StaggerContainer>

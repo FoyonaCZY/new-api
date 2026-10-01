@@ -83,6 +83,17 @@ async function renderSections(isAuthenticated = false) {
 }
 
 describe('homepage platform sections', () => {
+  it('reserves space for the lazy decorative artwork without adding it to the accessible content', async () => {
+    const { container } = await renderSections()
+    const artwork = container.querySelector('img')
+    expect(artwork).toHaveAttribute('loading', 'lazy')
+    expect(artwork).toHaveAttribute('width', '1672')
+    expect(artwork).toHaveAttribute('height', '941')
+    expect(artwork).toHaveAttribute('alt', '')
+    expect(artwork).toHaveAttribute('aria-hidden', 'true')
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+
   it('switches feature examples with the tabs and labels them as examples', async () => {
     const user = userEvent.setup()
     await renderSections()

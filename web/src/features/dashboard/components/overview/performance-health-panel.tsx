@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { Card } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getPerfMetricsSummary } from '@/features/performance-metrics/api'
 import {
@@ -59,9 +60,9 @@ export function PerformanceHealthPanel() {
   const hasData = models.length > 0
 
   return (
-    <section className='h-full min-w-0 border-t'>
-      <div className='flex flex-wrap items-baseline justify-between gap-2 border-b py-4'>
-        <h3 className='font-serif text-xl tracking-tight'>
+    <Card className='h-full min-w-0 gap-0 rounded-lg border-0 p-5 shadow-none sm:p-6'>
+      <div className='flex flex-wrap items-baseline justify-between gap-2 pb-5'>
+        <h3 className='text-lg font-medium tracking-tight'>
           {t('Performance health')}
         </h3>
         <span className='text-muted-foreground text-xs'>
@@ -69,8 +70,8 @@ export function PerformanceHealthPanel() {
         </span>
       </div>
 
-      <div className='flex flex-col gap-6 py-6'>
-        <div className='divide-border/70 grid grid-cols-1 gap-4 divide-y sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-y-0'>
+      <div className='flex flex-col gap-6'>
+        <div className='bg-muted/45 grid grid-cols-1 gap-3 rounded-md p-1 sm:grid-cols-3'>
           <MetricCell
             label={t('Success rate')}
             value={formatUptimePct(summary?.success_rate ?? Number.NaN)}
@@ -103,11 +104,11 @@ export function PerformanceHealthPanel() {
               <h4 className='text-muted-foreground mb-2 text-xs font-medium'>
                 {t('Top models by traffic')}
               </h4>
-              <div className='grid grid-cols-1 gap-x-8 sm:grid-cols-2'>
+              <div className='grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2'>
                 {topModels.map((model) => (
                   <div
                     key={model.model_name}
-                    className='flex items-center justify-between gap-3 border-b py-3'
+                    className='bg-muted/25 flex items-center justify-between gap-3 rounded-sm px-3 py-3'
                   >
                     <span className='min-w-0 flex-1 font-mono text-xs break-all'>
                       {model.model_name}
@@ -136,7 +137,7 @@ export function PerformanceHealthPanel() {
           )
         )}
       </div>
-    </section>
+    </Card>
   )
 }
 
@@ -147,7 +148,7 @@ function MetricCell(props: {
   valueClassName?: string
 }) {
   return (
-    <div className='min-w-0 pt-4 first:pt-0 sm:px-6 sm:pt-0 sm:first:pl-0 sm:last:pr-0'>
+    <div className='min-w-0 px-4 py-3'>
       <div className='text-muted-foreground text-xs'>{props.label}</div>
       {props.loading ? (
         <Skeleton className='mt-1.5 h-5 w-16' />

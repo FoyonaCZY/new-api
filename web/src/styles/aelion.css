@@ -141,6 +141,19 @@ For commercial licensing, please contact support@quantumnous.com
   inset: 0;
   background: linear-gradient(90deg, #09277cb8, #09277c20 85%);
 }
+.aelion-art-panorama img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  margin-inline-start: auto;
+  object-fit: contain;
+  object-position: right center;
+  mask-image: linear-gradient(to right, transparent, black 28%);
+  animation: none;
+}
+.aelion-public-title > .aelion-art-panorama {
+  top: 4rem;
+}
 .aelion-banner {
   position: relative;
   isolation: isolate;
@@ -223,7 +236,8 @@ For commercial licensing, please contact support@quantumnous.com
   background: #ffffff20;
 }
 .aelion-hero {
-  min-height: min(850px, 100svh);
+  min-height: 100vh;
+  min-height: 100svh;
   padding: 11rem max(2rem, calc((100% - 1280px) / 2)) 6rem;
   display: flex;
   align-items: center;
@@ -378,7 +392,7 @@ body:not([data-theme-font]) .aelion-public-title h1 {
 @media (max-width: 767px) {
   .aelion-hero {
     min-height: 760px;
-    min-height: min(850px, 100svh);
+    min-height: 100svh;
     padding: 9rem 1.5rem 4rem;
     align-items: flex-start;
   }

@@ -45,35 +45,60 @@ function RequestFlow(props: { routing?: boolean }) {
 
   return (
     <div className='platform-request-flow'>
-      <div className='min-w-0'>
-        <p className='text-muted-foreground mb-5 text-xs'>{t('Client')}</p>
-        <ul className='divide-border/60 divide-y'>
+      <div className='platform-flow-side'>
+        <p>{t('Client')}</p>
+        <ul>
           {clients.map((client) => (
-            <li
-              key={client}
-              className='py-3 font-mono text-xs break-words sm:text-sm'
-            >
+            <li key={client} className='platform-flow-node font-mono'>
               {client}
             </li>
           ))}
         </ul>
       </div>
-      <div className='platform-flow-connector' aria-hidden='true' />
-      <div className='min-w-0 border-y py-8 text-center'>
-        <p className='font-serif text-3xl tracking-tight break-words sm:text-4xl'>
-          {siteBrand}
-        </p>
-        <p className='text-muted-foreground mt-3 text-xs'>API</p>
+      <div className='platform-flow-connector' aria-hidden='true'>
+        <svg viewBox='0 0 48 280' preserveAspectRatio='none'>
+          {clients.map((client, index) => {
+            const y = 154 + (index - (clients.length - 1) / 2) * 56
+            const path = `M 0 ${y} C 22 ${y} 26 118 48 118`
+            return (
+              <g key={client}>
+                <path className='platform-flow-rail' d={path} />
+                <path className='platform-flow-route' d={path} />
+              </g>
+            )
+          })}
+        </svg>
       </div>
-      <div className='platform-flow-connector' aria-hidden='true' />
-      <div className='min-w-0'>
-        <p className='text-muted-foreground mb-5 text-xs'>{t('Upstream')}</p>
-        <ul className='divide-border/60 divide-y'>
+      <div className='platform-flow-hub'>
+        <div className='platform-flow-hub-mark' aria-hidden='true'>
+          {siteBrand === 'Aelion' ? (
+            <span className='aelion-brand-mark' />
+          ) : (
+            <span>API</span>
+          )}
+        </div>
+        <p>{siteBrand}</p>
+        <span>API</span>
+      </div>
+      <div className='platform-flow-connector' aria-hidden='true'>
+        <svg viewBox='0 0 48 280' preserveAspectRatio='none'>
+          {destinations.map((destination, index) => {
+            const y = 154 + (index - (destinations.length - 1) / 2) * 56
+            const path = `M 0 118 C 22 118 26 ${y} 48 ${y}`
+            return (
+              <g key={destination}>
+                <path className='platform-flow-rail' d={path} />
+                <path className='platform-flow-route' d={path} />
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+      <div className='platform-flow-side'>
+        <p>{t('Upstream')}</p>
+        <ul>
           {destinations.map((destination, index) => (
-            <li
-              key={destination}
-              className='flex items-baseline justify-between gap-3 py-3 text-sm'
-            >
+            <li key={destination} className='platform-flow-node'>
               <span>{destination}</span>
               {props.routing && (
                 <span className='text-muted-foreground font-mono text-xs'>
@@ -272,8 +297,20 @@ export function PlatformSections(props: PlatformSectionsProps) {
         </div>
       </section>
 
+      <AnimateInView className='home-mythology-art' animation='fade-in'>
+        <img
+          src='/images/aelion-atlas.png'
+          alt=''
+          aria-hidden='true'
+          width={1672}
+          height={941}
+          loading='lazy'
+          decoding='async'
+        />
+      </AnimateInView>
+
       <section
-        className='border-t px-6 py-20 md:py-28'
+        className='px-6 py-20 md:py-28'
         aria-labelledby='platform-setup-title'
       >
         <div className='mx-auto max-w-6xl'>

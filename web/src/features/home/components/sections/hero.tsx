@@ -115,6 +115,17 @@ export function Hero(props: HeroProps) {
             )}
           </p>
         </AnimateInView>
+        <AnimateInView className='home-victory-art' animation='fade-in'>
+          <img
+            src='/images/aelion-victory.png'
+            alt=''
+            aria-hidden='true'
+            width={1672}
+            height={941}
+            loading='lazy'
+            decoding='async'
+          />
+        </AnimateInView>
         <div className='aelion-integration-links'>
           {[
             ['Cherry Studio', 'https://cherry-ai.com'],

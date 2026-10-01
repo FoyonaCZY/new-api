@@ -24,7 +24,7 @@ import {
   type ReactNode,
 } from 'react'
 
-import { ArtBackdrop } from '@/components/art-backdrop'
+import { PageArtBackdrop } from '@/components/art-backdrop'
 
 import { Main } from './main'
 import { PageFooterProvider } from './page-footer'
@@ -84,7 +84,7 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
     <PageFooterProvider container={footerContainer}>
       <Main>
         <header className='aelion-banner aelion-page-heading shrink-0'>
-          <ArtBackdrop />
+          <PageArtBackdrop />
           {breadcrumb != null && (
             <div className='mb-2 sm:mb-3'>{breadcrumb}</div>
           )}

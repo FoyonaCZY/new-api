@@ -18,51 +18,117 @@ For commercial licensing, please contact support@quantumnous.com
 */
 .platform-request-flow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr) 2rem minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) 2rem 5.5rem 2rem minmax(0, 1fr);
   align-items: center;
-  min-height: 17rem;
+  min-height: 20rem;
+  padding: 1.25rem;
+  background: color-mix(in oklch, var(--card) 90%, var(--primary) 4%);
+  border-radius: 0.5rem;
 }
-
-.platform-flow-connector {
-  position: relative;
-  height: 1px;
-  overflow: hidden;
-  background: var(--border);
+.platform-flow-side {
+  min-width: 0;
 }
-
-.platform-flow-connector::after {
-  content: '';
-  position: absolute;
-  inset: 0;
+.platform-flow-side > p {
+  margin-bottom: 0.75rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.platform-flow-side ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 14rem;
+}
+.platform-flow-node {
+  display: flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  background: var(--background);
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+.platform-flow-hub {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+.platform-flow-hub-mark {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: 0.375rem;
   background: var(--primary);
-  transform: translateX(-100%);
-  animation: platform-request-trace 3.5s ease-in-out infinite;
+  color: var(--primary-foreground);
+  font-size: 1.125rem;
 }
-
-.platform-flow-connector:nth-of-type(4)::after {
-  animation-delay: 0.75s;
+.platform-flow-hub-mark .aelion-brand-mark {
+  width: 2.25rem;
+  height: 2.25rem;
 }
-
+.platform-flow-hub > p {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.platform-flow-hub > span {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.625rem;
+}
+.platform-flow-connector {
+  height: 17.5rem;
+}
+.platform-flow-connector svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.platform-flow-rail,
+.platform-flow-route {
+  fill: none;
+  stroke-width: 1.3;
+  vector-effect: non-scaling-stroke;
+}
+.platform-flow-rail {
+  stroke: color-mix(in oklch, var(--primary) 15%, var(--border));
+}
+.platform-flow-route {
+  stroke: var(--primary);
+  stroke-dasharray: 4 160;
+  animation: platform-request-trace 4s linear infinite;
+  opacity: 0.6;
+}
+.platform-flow-connector g:nth-child(2) .platform-flow-route {
+  animation-delay: -0.7s;
+}
+.platform-flow-connector g:nth-child(3) .platform-flow-route {
+  animation-delay: -1.4s;
+}
+.platform-flow-connector g:nth-child(4) .platform-flow-route {
+  animation-delay: -2.1s;
+}
+.platform-sections[data-animation-paused='true'] .platform-flow-route,
 .platform-sections[data-animation-paused='true']
   .platform-flow-connector::after {
   animation-play-state: paused;
 }
-
 .platform-sections[data-animation-paused='false'] .platform-feature-panel {
   animation: platform-panel-enter 240ms ease-out both;
 }
-
 @keyframes platform-request-trace {
-  0%,
-  12% {
-    transform: translateX(-100%);
-  }
-  68%,
-  100% {
-    transform: translateX(100%);
+  to {
+    stroke-dashoffset: -328;
   }
 }
-
 @keyframes platform-panel-enter {
   from {
     opacity: 0;
@@ -73,19 +139,114 @@ For commercial licensing, please contact support@quantumnous.com
     transform: translateY(0);
   }
 }
-
-@media (max-width: 479px) {
-  .platform-request-flow {
-    grid-template-columns: minmax(0, 1fr) 0.75rem minmax(
-        0,
-        0.8fr
-      ) 0.75rem minmax(0, 1fr);
+@keyframes platform-mobile-trace {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(350%);
   }
 }
-
+.home-mythology-art {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+.home-mythology-art img,
+.home-victory-art img {
+  display: block;
+  width: 100%;
+  height: clamp(17rem, 38vw, 34rem);
+  object-fit: cover;
+}
+.home-mythology-art img {
+  object-position: center 62%;
+}
+.home-victory-art {
+  margin-top: 2.5rem;
+}
+.home-victory-art img {
+  height: clamp(17rem, 33vw, 28rem);
+  object-position: center 20%;
+}
+.home-victory-art + .aelion-integration-links {
+  margin-top: 0;
+  border-top: 0;
+}
+@media (max-width: 767px) {
+  .home-mythology-art {
+    padding: 0;
+  }
+  .home-victory-art {
+    margin-top: 1.75rem;
+  }
+}
+@media (max-width: 639px) {
+  .platform-request-flow {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.25rem;
+  }
+  .platform-flow-side > p {
+    text-align: center;
+  }
+  .platform-flow-side ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-height: 0;
+    gap: 0.5rem;
+  }
+  .platform-flow-node {
+    justify-content: center;
+    text-align: center;
+    padding-inline: 0.5rem;
+  }
+  .platform-flow-node:only-child {
+    grid-column: 1 / -1;
+  }
+  .platform-flow-connector {
+    position: relative;
+    width: 1px;
+    height: 2rem;
+    justify-self: center;
+    margin: 0.5rem 0;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .platform-flow-connector svg {
+    display: none;
+  }
+  .platform-flow-connector::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 0.5rem;
+    background: var(--primary);
+    animation: platform-mobile-trace 2s linear infinite;
+  }
+  .platform-flow-hub > span {
+    display: none;
+  }
+  .platform-flow-hub {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .platform-flow-hub > p {
+    margin: 0;
+  }
+  .platform-flow-hub-mark {
+    width: 3rem;
+    height: 3rem;
+  }
+  .platform-flow-hub-mark .aelion-brand-mark {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
+  .platform-flow-route,
   .platform-flow-connector::after,
   .platform-feature-panel {
-    animation: none !important;
+    animation: none;
   }
 }
