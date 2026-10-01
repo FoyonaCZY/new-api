@@ -1,0 +1,103 @@
+name: Deploy api.aelion.chat
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build & push image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Image name (lowercase)
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/new-api" >> "$GITHUB_OUTPUT"
+
+      # Dockerfile 构建时需要 VERSION 文件（上游 release 流程里是按 tag 生成的）
+      - name: Write VERSION file
+        run: echo "dev-${GITHUB_SHA::7}" > VERSION
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Log in to GHCR
+        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=raw,value=latest
+            type=raw,value=sha-${{ github.sha }}
+
+      - name: Build & push
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    name: Deploy to server
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Deploy over SSH and health check
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/new-api:sha-${GITHUB_SHA}"
+          LATEST="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/new-api:latest"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          SSH="ssh -i ~/.ssh/deploy_key -o BatchMode=yes ${SSH_USER}@${SSH_HOST}"
+
+          # GHCR 镜像可能是私有的：部署期间临时登录，结束即登出
+          echo "$GHCR_TOKEN" | $SSH "sudo docker login ghcr.io -u ${GHCR_USER} --password-stdin"
+          $SSH "sudo docker pull ${IMAGE} && sudo docker tag ${IMAGE} ${LATEST} && cd /opt/new-api && sudo docker compose up -d --pull never"
+          $SSH "sudo docker logout ghcr.io"
+
+          for i in $(seq 1 30); do
+            code=$(curl -sS -o /dev/null -w '%{http_code}' https://api.aelion.chat/api/status || true)
+            if [ "$code" = "200" ]; then
+              echo "health check OK"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::health check failed, last status=${code}"
+          exit 1
