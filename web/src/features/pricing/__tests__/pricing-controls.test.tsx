@@ -20,11 +20,13 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 
+import { EmptyState } from '../components/empty-state'
 import { PricingSidebar } from '../components/pricing-sidebar'
 import {
   PricingToolbar,
   type PricingToolbarProps,
 } from '../components/pricing-toolbar'
+import { SearchBar } from '../components/search-bar'
 import type { PricingModel } from '../types'
 
 function toolbarProps(): PricingToolbarProps {
@@ -61,6 +63,71 @@ function toolbarProps(): PricingToolbarProps {
 }
 
 describe('pricing controls', () => {
+  it('clears a search with no matches and hides reset when the catalog itself is empty', async () => {
+    const onClearFilters = vi.fn()
+    const user = userEvent.setup()
+    const { rerender } = render(
+      <EmptyState
+        searchQuery='missing-model'
+        hasActiveFilters={false}
+        onClearFilters={onClearFilters}
+      />
+    )
+    expect(screen.getByText('No models found')).toBeVisible()
+    await user.click(screen.getByRole('button', { name: 'Clear all filters' }))
+    expect(onClearFilters).toHaveBeenCalledOnce()
+    rerender(
+      <EmptyState hasActiveFilters={false} onClearFilters={onClearFilters} />
+    )
+    expect(
+      screen.queryByRole('button', { name: 'Clear all filters' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('focuses catalog search with the keyboard shortcut and clears its full query', async () => {
+    const user = userEvent.setup()
+    const onChange = vi.fn()
+    const onClear = vi.fn()
+    const { rerender } = render(
+      <SearchBar value='' onChange={onChange} onClear={onClear} />
+    )
+    await user.keyboard('{Control>}k{/Control}')
+    const input = screen.getByRole('textbox', { name: 'Search models' })
+    expect(input).toHaveFocus()
+    await user.type(input, 'a')
+    expect(onChange).toHaveBeenCalledWith('a')
+    const longQuery = 'provider/model-with-a-complete-long-version-20261002'
+    rerender(
+      <SearchBar value={longQuery} onChange={onChange} onClear={onClear} />
+    )
+    expect(input).toHaveValue(longQuery)
+    await user.click(screen.getByRole('button', { name: 'Clear search' }))
+    expect(onClear).toHaveBeenCalledOnce()
+    input.focus()
+    await user.keyboard('{Escape}')
+    expect(input).not.toHaveFocus()
+  })
+
+  it('keeps long group names readable and selects the full-width filter with the keyboard', async () => {
+    const props = toolbarProps()
+    const group = 'premium-enterprise-with-a-long-group-name'
+    const user = userEvent.setup()
+    const { rerender } = render(<PricingSidebar {...props} groups={[group]} />)
+    const option = screen.getByRole('button', { name: group })
+    expect(option).toHaveClass('w-full')
+    expect(within(option).getByText(group)).toHaveClass('whitespace-normal')
+    option.focus()
+    await user.keyboard('{Enter}')
+    expect(props.onGroupChange).toHaveBeenCalledWith(group)
+    rerender(<PricingSidebar {...props} groups={[group]} groupFilter={group} />)
+    expect(option).toHaveAttribute('aria-pressed', 'true')
+    const section = screen.getByRole('button', { name: 'Groups' })
+    expect(section).toHaveAttribute('aria-expanded', 'true')
+    await user.click(section)
+    expect(section).toHaveAttribute('aria-expanded', 'false')
+    expect(option).not.toBeVisible()
+  })
+
   it('counts each model once per filter and updates counts when the catalog changes', () => {
     const props = toolbarProps()
     const base: PricingModel = {

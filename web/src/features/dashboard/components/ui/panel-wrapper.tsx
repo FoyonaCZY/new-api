@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Skeleton } from '@/components/ui/skeleton'
@@ -42,7 +42,7 @@ function PanelHeader(props: {
 }) {
   const heading = (
     <div className='flex flex-col gap-1'>
-      <div className='text-sm font-semibold'>{props.title}</div>
+      <h3 className='font-serif text-xl tracking-tight'>{props.title}</h3>
       {props.description != null && (
         <div className='text-muted-foreground text-xs'>{props.description}</div>
       )}
@@ -50,7 +50,7 @@ function PanelHeader(props: {
   )
 
   return (
-    <div className='border-b px-4 py-3 sm:px-5'>
+    <div className='border-b py-4'>
       {props.actions != null ? (
         <div className='flex items-start justify-between gap-2'>
           {heading}
@@ -67,16 +67,13 @@ export function PanelWrapper(props: PanelWrapperProps) {
   const { t } = useTranslation()
   const resolvedEmptyMessage = props.emptyMessage ?? t('No data available')
   const height = props.height ?? 'h-64'
-  const frameClassName = cn(
-    'overflow-hidden rounded-2xl border bg-card shadow-xs',
-    props.className
-  )
+  const frameClassName = cn('min-w-0 overflow-hidden border-t', props.className)
 
   if (props.loading) {
     return (
       <div className={frameClassName}>
         <PanelHeader title={props.title} description={props.description} />
-        <div className={cn('p-4 sm:p-5', props.contentClassName)}>
+        <div className={cn('py-4', props.contentClassName)}>
           <Skeleton className={`w-full ${height}`} />
         </div>
       </div>
@@ -107,9 +104,7 @@ export function PanelWrapper(props: PanelWrapperProps) {
         description={props.description}
         actions={props.headerActions}
       />
-      <div className={cn('p-4 sm:p-5', props.contentClassName)}>
-        {props.children}
-      </div>
+      <div className={cn('py-4', props.contentClassName)}>{props.children}</div>
     </div>
   )
 }

@@ -23,7 +23,14 @@ import {
   createRouter,
   RouterProvider,
 } from '@tanstack/react-router'
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import {
+  act,
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -36,6 +43,7 @@ import { OverviewDashboard } from '../overview-dashboard'
 const storageKey = 'dashboard_overview_setup_guide_expanded'
 let client: QueryClient
 let keyLookupError: Error | null
+let hasApiKey: boolean
 
 beforeEach(() => {
   window.localStorage.clear()
@@ -52,6 +60,7 @@ beforeEach(() => {
     defaultOptions: { queries: { retry: false } },
   })
   keyLookupError = null
+  hasApiKey = true
   vi.spyOn(api, 'get').mockImplementation(async (url) => {
     switch (url) {
       case '/api/token/?p=1&size=10':
@@ -60,7 +69,9 @@ beforeEach(() => {
           data: {
             success: true,
             data: {
-              items: [{ id: 1, name: 'App key', key: 'masked', status: 1 }],
+              items: hasApiKey
+                ? [{ id: 1, name: 'App key', key: 'masked', status: 1 }]
+                : [],
             },
           },
         }
@@ -78,7 +89,14 @@ beforeEach(() => {
       case '/api/user/models':
         return { data: { success: true, data: ['gpt-4o-mini'] } }
       case '/api/data/self':
-        return { data: { success: true, data: [] } }
+        return {
+          data: {
+            success: true,
+            data: [{ created_at: 1780000000, quota: 125000, count: 8 }],
+          },
+        }
+      case '/api/perf-metrics/summary':
+        return { data: { success: true, data: { models: [], summary: null } } }
       default:
         throw new Error(`Unexpected dashboard request: ${url}`)
     }
@@ -107,6 +125,100 @@ async function renderOverview() {
 }
 
 describe('overview setup guide', () => {
+  it('keeps balance, recent usage, historical usage and request counts visible in the usage section', async () => {
+    await renderOverview()
+
+    const usage = await screen.findByRole('region', { name: 'Usage' })
+    expect(await within(usage).findByText('$0.25')).toBeVisible()
+    expect(within(usage).getByText('$2')).toBeVisible()
+    expect(within(usage).getByText('$0.002')).toBeVisible()
+    expect(within(usage).getByText('1')).toBeVisible()
+    expect(
+      within(usage).getByRole('button', { name: 'Wallet' })
+    ).toHaveAttribute('href', '/wallet')
+  })
+
+  it('keeps request examples keyboard scrollable and fetches the real key only when copying', async () => {
+    const user = userEvent.setup()
+    const writeText = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockResolvedValue()
+    const fetchKey = vi.spyOn(api, 'post').mockResolvedValue({
+      data: { success: true, data: { key: 'test-real-key' } },
+    })
+    window.localStorage.setItem(storageKey, 'expanded')
+    await renderOverview()
+
+    const copy = await screen.findByRole('button', {
+      name: 'Copy ready-to-run curl',
+    })
+    const preview = screen.getByLabelText('First API request')
+    expect(preview).toHaveAttribute('tabindex', '0')
+    expect(preview).toHaveClass('overflow-x-auto')
+    expect(preview).toHaveTextContent('sk-masked')
+    expect(fetchKey).not.toHaveBeenCalled()
+
+    await user.click(copy)
+    expect(fetchKey).toHaveBeenCalledWith('/api/token/1/key')
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining('Authorization: Bearer sk-test-real-key')
+    )
+    expect(writeText).toHaveBeenCalledWith(
+      expect.stringContaining('"model":"gpt-4o-mini"')
+    )
+    expect(preview).not.toHaveTextContent('test-real-key')
+  })
+
+  it('offers key creation instead of copying when the account has no API key', async () => {
+    hasApiKey = false
+    await renderOverview()
+
+    expect(
+      await screen.findByText('Create an API key to unlock the real request')
+    ).toBeVisible()
+    expect(
+      screen.queryByRole('button', { name: 'Copy ready-to-run curl' })
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getAllByRole('button', { name: 'Create API Key' })
+    ).toHaveLength(2)
+    expect(screen.getAllByRole('listitem')).toHaveLength(3)
+  })
+
+  it.each([
+    { role: 1, admin: false },
+    { role: 10, admin: true },
+  ])(
+    'shows channel and service health entry points only for administrators ($role)',
+    async ({ role, admin }) => {
+      useAuthStore.getState().auth.setUser({
+        id: 1,
+        username: 'dashboard-user',
+        role,
+        quota: 1000000,
+      })
+      window.localStorage.setItem(storageKey, 'expanded')
+      await renderOverview()
+      await screen.findByRole('button', { name: 'Hide setup guide' })
+
+      if (admin) {
+        expect(
+          screen.getByRole('button', { name: /^Channels/ })
+        ).toHaveAttribute('href', '/channels')
+        expect(
+          screen.getByRole('heading', { name: 'Performance health' })
+        ).toBeVisible()
+      } else {
+        expect(
+          screen.queryByRole('button', { name: /^Channels/ })
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('heading', { name: 'Performance health' })
+        ).not.toBeInTheDocument()
+      }
+    }
+  )
+
   it('shows usage first and only a header entry when setup is complete', async () => {
     await renderOverview()
 
@@ -114,14 +226,14 @@ describe('overview setup guide', () => {
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
     expect(
       screen.getAllByRole('heading').map((heading) => heading.textContent)
-    ).toEqual(['Overview', 'Usage at a glance'])
+    ).toEqual(['Overview', 'Usage'])
     expect(screen.queryByText('Setup guide complete')).not.toBeInTheDocument()
     expect(screen.queryByText('Setup progress: 3/3')).not.toBeInTheDocument()
     for (const name of ['API Keys', 'Channels', 'Usage Logs', 'Pricing']) {
       expect(screen.queryByRole('button', { name })).not.toBeInTheDocument()
     }
-    const panel = document.getElementById(
-      toggle.getAttribute('aria-controls') ?? ''
+    const panel = document.querySelector(
+      `[id="${toggle.getAttribute('aria-controls')}"]`
     )
     expect(panel).toBeInTheDocument()
     expect(panel).not.toBeVisible()
@@ -137,11 +249,11 @@ describe('overview setup guide', () => {
     await user.keyboard('{Enter}')
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
     expect(
-      document.getElementById(toggle.getAttribute('aria-controls') ?? '')
+      document.querySelector(`[id="${toggle.getAttribute('aria-controls')}"]`)
     ).toBeVisible()
     expect(
       screen.getByRole('heading', {
-        name: 'Build on your API gateway in minutes',
+        name: 'Setup guide',
       })
     ).toBeVisible()
     await waitFor(() =>
@@ -188,9 +300,6 @@ describe('overview setup guide', () => {
       await screen.findByRole('button', { name: 'Hide setup guide' })
     )
     expect(screen.getByText('Setup progress: 1/3')).toBeVisible()
-    expect(
-      screen.getByText('Setup guide is collapsed. Expand it anytime.')
-    ).toBeVisible()
     expect(screen.getByRole('button', { name: 'API Keys' })).toBeVisible()
     expect(
       screen.queryByRole('button', { name: 'Setup guide' })

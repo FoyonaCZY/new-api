@@ -20,12 +20,14 @@ import { Link } from '@tanstack/react-router'
 import { ArrowUpRight } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
+import { AnimateInView } from '@/components/animate-in-view'
 import { ArtBackdrop } from '@/components/art-backdrop'
 import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
 import { HeroTerminalDemo } from '../hero-terminal-demo'
+import { PlatformSections } from '../platform-sections'
 
 interface HeroProps {
   className?: string
@@ -78,7 +80,8 @@ export function Hero(props: HeroProps) {
           <span key={name}>{name}</span>
         ))}
       </section>
-      <section className='aelion-api-section'>
+      <PlatformSections isAuthenticated={props.isAuthenticated} />
+      <AnimateInView as='section' className='aelion-api-section'>
         <div>
           <h2>{t('Use the API you already know.')}</h2>
           <p>
@@ -100,29 +103,62 @@ export function Hero(props: HeroProps) {
             {t('Docs')}
             <ArrowUpRight aria-hidden='true' className='size-4' />
           </Button>
-          <div className='aelion-apps'>
-            <a
-              href='https://cherry-ai.com'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              Cherry Studio
-            </a>
-            <a
-              href='https://ccswitch.io'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              CC Switch
-            </a>
-          </div>
-          <p className='text-xs'>
+        </div>
+        <HeroTerminalDemo />
+      </AnimateInView>
+      <section className='aelion-integrations'>
+        <AnimateInView className='aelion-integrations-heading'>
+          <h2>{t('Supported Applications')}</h2>
+          <p>
             {t(
               'Supports one-click configuration and perfectly adapts to NewAPI multi-protocol configuration.'
             )}
           </p>
+        </AnimateInView>
+        <div className='aelion-integration-links'>
+          {[
+            ['Cherry Studio', 'https://cherry-ai.com'],
+            ['CC Switch', 'https://ccswitch.io'],
+            ['Open WebUI', 'https://openwebui.com'],
+            ['Dify', 'https://dify.ai'],
+          ].map(([name, href], index) => (
+            <AnimateInView key={name} delay={index * 70}>
+              <a href={href} target='_blank' rel='noopener noreferrer'>
+                <span>{name}</span>
+                <ArrowUpRight className='size-5' aria-hidden='true' />
+              </a>
+            </AnimateInView>
+          ))}
         </div>
-        <HeroTerminalDemo />
+      </section>
+      <section className='aelion-banner aelion-home-cta'>
+        <ArtBackdrop className='aelion-art-detail' />
+        <AnimateInView>
+          <h2>{t('Get Started')}</h2>
+          <div className='aelion-hero-actions'>
+            <Button
+              render={
+                <Link to={props.isAuthenticated ? '/keys' : '/sign-up'} />
+              }
+            >
+              {t('Create API Key')}
+              <ArrowUpRight aria-hidden='true' className='size-4' />
+            </Button>
+            <Button
+              className='aelion-hero-secondary'
+              variant='outline'
+              render={
+                docsUrl.startsWith('http') ? (
+                  <a href={docsUrl} target='_blank' rel='noopener noreferrer' />
+                ) : (
+                  <Link to={docsUrl} />
+                )
+              }
+            >
+              {t('Docs')}
+            </Button>
+          </div>
+        </AnimateInView>
       </section>
     </>
   )

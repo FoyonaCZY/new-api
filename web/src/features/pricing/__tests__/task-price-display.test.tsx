@@ -100,6 +100,52 @@ const model: PricingModel = {
 }
 const clients: QueryClient[] = []
 
+it('keeps the long model name visible while switching detail tabs with the keyboard', async () => {
+  const name = 'provider/model-with-a-long-name-and-version-suffix-20261002'
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  })
+  clients.push(client)
+  client.setQueryData(['perf-metrics', name], {
+    success: true,
+    data: { groups: [] },
+  })
+  render(
+    <QueryClientProvider client={client}>
+      <ModelDetailsContent
+        model={{ ...model, model_name: name }}
+        groupRatio={{ default: 1 }}
+        usableGroup={{ default: { desc: '', ratio: 1 } }}
+        endpointMap={{}}
+        autoGroups={[]}
+        priceRate={1}
+        usdExchangeRate={1}
+        tokenUnit='M'
+      />
+    </QueryClientProvider>
+  )
+  expect(screen.getByRole('heading', { name })).toHaveClass(
+    '[overflow-wrap:anywhere]'
+  )
+  const user = userEvent.setup()
+  screen.getByRole('tab', { name: 'Overview' }).focus()
+  await user.keyboard('{ArrowRight}{Enter}')
+  expect(screen.getByRole('tab', { name: 'Performance' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+  expect(
+    screen.getByText('Performance data is not yet available for this model.')
+  ).toBeVisible()
+  expect(screen.getByRole('heading', { name })).toBeVisible()
+  await user.keyboard('{ArrowLeft}{Enter}')
+  expect(screen.getByRole('tab', { name: 'Overview' })).toHaveAttribute(
+    'aria-selected',
+    'true'
+  )
+  expect(screen.getByRole('heading', { name: 'Base Price' })).toBeVisible()
+})
+
 it('shows nested task conditions and prices in detail and group tables without ambiguous log matches', () => {
   vi.spyOn(api, 'get').mockResolvedValue({ data: { data: { groups: [] } } })
   const client = new QueryClient({

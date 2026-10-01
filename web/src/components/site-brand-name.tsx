@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-/** An optional operator brand alongside the configured upstream project name. */
+/** Header branding; the footer retains the upstream project attribution. */
 export function SiteBrandName(props: { name: string }) {
   const operator = import.meta.env.VITE_SITE_BRAND?.trim()
 
@@ -24,8 +24,7 @@ export function SiteBrandName(props: { name: string }) {
 
   return (
     <span className='aelion-brand-name'>
-      <span>{operator}</span>
-      <span className='aelion-project-name'>{props.name}</span>
+      <span title={operator}>{operator}</span>
     </span>
   )
 }

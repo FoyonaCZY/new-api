@@ -111,7 +111,7 @@ import { ModelDetailsPerformance } from './model-details-performance'
 
 function SectionTitle(props: { children: React.ReactNode }) {
   return (
-    <h2 className='text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase'>
+    <h2 className='text-foreground mb-4 text-base font-medium'>
       {props.children}
     </h2>
   )
@@ -139,7 +139,7 @@ function UnconfiguredTaskPricingNotice(props: { model: PricingModel }) {
   const enumFields = getTaskEnumFields(props.model.billing_usage_schema)
 
   return (
-    <div className='bg-muted/20 flex flex-col gap-3 rounded-lg border p-3'>
+    <div className='border-border flex flex-col gap-3 border-y py-4'>
       <p className='text-muted-foreground text-sm'>
         {t(
           'This model is billed by usage, but the administrator has not configured its pricing yet.'
@@ -246,15 +246,16 @@ function OverviewMetric(props: {
   const Icon = props.icon
 
   return (
-    <div className='flex min-w-0 items-center gap-2 px-3 py-2'>
-      <Icon className='text-muted-foreground/70 size-3.5 shrink-0' />
+    <div className='flex min-w-0 items-start gap-3 px-4 py-5'>
+      <Icon
+        aria-hidden
+        className='text-muted-foreground mt-0.5 size-4 shrink-0'
+      />
       <div className='min-w-0 flex-1'>
-        <div className='text-muted-foreground truncate text-[10px] font-medium tracking-wider uppercase'>
-          {props.label}
-        </div>
+        <div className='text-muted-foreground text-xs'>{props.label}</div>
         <div
           className={cn(
-            'text-foreground truncate font-mono text-sm font-semibold tabular-nums',
+            'text-foreground mt-2 font-mono text-xl font-medium tabular-nums',
             props.valueClassName
           )}
         >
@@ -280,7 +281,7 @@ function OverviewSummaryGrid(props: { model: PricingModel }) {
   const avgLatency = summary?.avg_latency_ms ?? 0
 
   return (
-    <div className='bg-muted/20 grid overflow-hidden rounded-lg border sm:grid-cols-3 sm:divide-x'>
+    <div className='border-border grid divide-y border-y sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
       <OverviewMetric
         icon={Timer}
         label='TPS'
@@ -301,14 +302,11 @@ function OverviewSummaryGrid(props: { model: PricingModel }) {
   )
 }
 
-function CatalogPillList(props: { items: string[] }) {
+function CatalogValueList(props: { items: string[] }) {
   return (
-    <div className='flex min-w-0 flex-wrap gap-1.5'>
+    <div className='flex min-w-0 flex-wrap gap-x-4 gap-y-2'>
       {props.items.map((item) => (
-        <span
-          key={item}
-          className='bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-medium'
-        >
+        <span key={item} className='text-foreground text-sm break-words'>
           {item}
         </span>
       ))}
@@ -326,10 +324,8 @@ function CatalogTextValue(props: { children: React.ReactNode }) {
 
 function CatalogInfoCell(props: { label: string; children: React.ReactNode }) {
   return (
-    <div className='bg-card flex min-w-0 flex-col gap-1 px-3 py-2.5'>
-      <span className='text-muted-foreground text-[10px] font-medium tracking-wider uppercase'>
-        {props.label}
-      </span>
+    <div className='border-border flex min-w-0 flex-col gap-2 border-b py-4'>
+      <span className='text-muted-foreground text-xs'>{props.label}</span>
       {props.children}
     </div>
   )
@@ -426,25 +422,20 @@ function ModelBackendQuickStats(props: { model: PricingModel }) {
   if (stats.length === 0) return null
 
   return (
-    <div className='bg-muted/20 grid grid-cols-2 gap-px overflow-hidden rounded-lg border @md/details:grid-cols-3 @2xl/details:grid-cols-5'>
+    <div className='border-border grid grid-cols-2 gap-x-6 border-y @md/details:grid-cols-3 @2xl/details:grid-cols-5'>
       {stats.map((stat) => {
         const Icon = stat.icon
         return (
-          <div
-            key={stat.key}
-            className='bg-background flex min-w-0 flex-col gap-0.5 px-3 py-2.5'
-          >
-            <span className='text-muted-foreground inline-flex min-w-0 items-center gap-1 text-[10px] font-medium tracking-wider uppercase'>
+          <div key={stat.key} className='flex min-w-0 flex-col gap-2 py-5'>
+            <span className='text-muted-foreground inline-flex min-w-0 items-center gap-1.5 text-xs'>
               <Icon className='size-3 shrink-0' />
               <span className='truncate'>{stat.label}</span>
             </span>
-            <span className='text-foreground truncate text-sm font-semibold tabular-nums'>
+            <span className='text-foreground text-sm font-medium tabular-nums'>
               {stat.value}
             </span>
             {stat.hint && (
-              <span className='text-muted-foreground/60 truncate text-[10px]'>
-                {stat.hint}
-              </span>
+              <span className='text-muted-foreground text-xs'>{stat.hint}</span>
             )}
           </div>
         )
@@ -472,9 +463,9 @@ function ModelBackendSignalsSection(props: { model: PricingModel }) {
       <SectionTitle>
         {t('Capabilities')} / {t('Supported modalities')}
       </SectionTitle>
-      <div className='grid gap-3 rounded-xl border p-3 @2xl/details:grid-cols-[minmax(0,1.5fr)_minmax(260px,1fr)]'>
+      <div className='border-border grid gap-6 border-b pb-6 @2xl/details:grid-cols-[minmax(0,1.5fr)_minmax(260px,1fr)]'>
         {capabilities.length > 0 ? (
-          <CatalogPillList
+          <CatalogValueList
             items={capabilities.map((capability) =>
               t(
                 CAPABILITY_LABEL_KEYS[capability as ModelCapability] ??
@@ -488,7 +479,7 @@ function ModelBackendSignalsSection(props: { model: PricingModel }) {
         {(inputModalities.length > 0 || outputModalities.length > 0) && (
           <div className='grid gap-2 sm:grid-cols-2'>
             {inputModalities.length > 0 && (
-              <div className='flex items-center justify-between gap-3 rounded-lg border px-3 py-2'>
+              <div className='flex items-baseline justify-between gap-3 py-2'>
                 <span className='text-muted-foreground text-xs font-medium'>
                   {t('Input')}
                 </span>
@@ -498,7 +489,7 @@ function ModelBackendSignalsSection(props: { model: PricingModel }) {
               </div>
             )}
             {outputModalities.length > 0 && (
-              <div className='flex items-center justify-between gap-3 rounded-lg border px-3 py-2'>
+              <div className='flex items-baseline justify-between gap-3 py-2'>
                 <span className='text-muted-foreground text-xs font-medium'>
                   {t('Output')}
                 </span>
@@ -532,14 +523,14 @@ function ModelBackendProviderSection(props: { model: PricingModel }) {
 
   cells.push(
     <CatalogInfoCell key='type' label={t('Type')}>
-      <ModelBillingModeBadge model={model} />
+      <ModelBillingModeBadge model={model} appearance='caption' />
     </CatalogInfoCell>
   )
 
   if (groups.length > 0) {
     cells.push(
       <CatalogInfoCell key='groups' label={t('Groups')}>
-        <CatalogPillList items={groups} />
+        <CatalogValueList items={groups} />
       </CatalogInfoCell>
     )
   }
@@ -547,7 +538,7 @@ function ModelBackendProviderSection(props: { model: PricingModel }) {
   if (endpoints.length > 0) {
     cells.push(
       <CatalogInfoCell key='endpoints' label={t('Endpoints')}>
-        <CatalogPillList items={endpoints} />
+        <CatalogValueList items={endpoints} />
       </CatalogInfoCell>
     )
   }
@@ -555,7 +546,7 @@ function ModelBackendProviderSection(props: { model: PricingModel }) {
   if (tags.length > 0) {
     cells.push(
       <CatalogInfoCell key='tags' label={t('Tags')}>
-        <CatalogPillList items={tags} />
+        <CatalogValueList items={tags} />
       </CatalogInfoCell>
     )
   }
@@ -573,7 +564,7 @@ function ModelBackendProviderSection(props: { model: PricingModel }) {
   return (
     <section>
       <SectionTitle>{t('Model')}</SectionTitle>
-      <div className='border-border/60 bg-border/60 grid grid-cols-1 gap-px overflow-hidden rounded-lg border sm:grid-cols-2'>
+      <div className='border-border grid grid-cols-1 gap-x-8 border-t sm:grid-cols-2'>
         {cells}
       </div>
     </section>
@@ -602,10 +593,10 @@ function ModelHeader(props: { model: PricingModel }) {
   const description = model.description || model.vendor_description || null
 
   return (
-    <header className='pb-4'>
-      <div className='flex items-center gap-2.5'>
+    <header className='pb-6'>
+      <div className='flex items-start gap-3'>
         {modelIcon}
-        <h1 className='font-mono text-xl font-bold tracking-tight sm:text-2xl'>
+        <h1 className='min-w-0 text-2xl leading-tight font-medium tracking-tight [overflow-wrap:anywhere] sm:text-3xl'>
           {model.model_name}
         </h1>
         <CopyButton
@@ -617,15 +608,14 @@ function ModelHeader(props: { model: PricingModel }) {
           aria-label={t('Copy model name')}
         />
       </div>
-      <div className='mt-1 flex flex-wrap items-center gap-1.5 text-xs'>
+      <div className='mt-3 flex flex-wrap items-center gap-3 text-sm'>
         {model.vendor_name && (
           <span className='text-muted-foreground'>{model.vendor_name}</span>
         )}
-        <span className='text-muted-foreground/30'>·</span>
-        <ModelBillingModeBadge model={model} />
+        <ModelBillingModeBadge model={model} appearance='caption' />
       </div>
       {description && (
-        <p className='text-muted-foreground mt-2 text-sm leading-relaxed'>
+        <p className='text-muted-foreground mt-5 max-w-2xl text-sm leading-7'>
           {description}
         </p>
       )}
@@ -760,7 +750,7 @@ function PriceSection(props: {
         {dynamicSummary.primaryEntries.length > 0 ? (
           <div
             className={cn(
-              'grid gap-2',
+              'grid gap-x-6 gap-y-3',
               dynamicSummary.primaryEntries.length > 1 && 'grid-cols-2'
             )}
           >
@@ -774,14 +764,14 @@ function PriceSection(props: {
               return (
                 <div
                   key={entry.key}
-                  className='bg-muted/20 rounded-lg border p-3'
+                  className='border-border min-w-0 border-y py-4'
                 >
                   <div className='text-muted-foreground text-xs'>
                     <DynamicPriceEntryLabel entry={entry} />
                   </div>
-                  <div className='text-foreground mt-1 font-mono text-base font-semibold tabular-nums'>
+                  <div className='text-foreground mt-2 font-mono text-xl font-medium tabular-nums'>
                     {entry.formattedRange ?? entry.formatted}
-                    <span className='text-muted-foreground/40 ml-1 text-xs font-normal'>
+                    <span className='text-muted-foreground ml-1 text-xs font-normal'>
                       / {unitLabel}
                     </span>
                   </div>
@@ -797,7 +787,7 @@ function PriceSection(props: {
           </p>
         )}
         {dynamicSummary.secondaryEntries.length > 0 && (
-          <div className='bg-muted/20 mt-3 rounded-lg border px-3 py-2.5'>
+          <div className='border-border mt-3 border-b py-4'>
             <div className='space-y-1.5'>
               {dynamicSummary.secondaryEntries.map((entry) => {
                 const unitLabelKey = getDynamicPriceUnitLabelKey(entry)
@@ -884,18 +874,18 @@ function PriceSection(props: {
   return (
     <section>
       <SectionTitle>{t('Base Price')}</SectionTitle>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid grid-cols-2 gap-6'>
         {primaryPriceTypes.map((item) => (
-          <div key={item.type} className='bg-muted/20 rounded-lg border p-3'>
+          <div key={item.type} className='border-border min-w-0 border-y py-4'>
             <div className='text-muted-foreground text-xs'>{item.label}</div>
-            <div className='text-foreground mt-1 font-mono text-base font-semibold tabular-nums'>
+            <div className='text-foreground mt-2 font-mono text-xl font-medium tabular-nums'>
               {renderPrice(item.type)}
             </div>
           </div>
         ))}
       </div>
       {secondaryItems.length > 0 && (
-        <div className='bg-muted/20 mt-3 rounded-lg border px-3 py-2.5'>
+        <div className='border-border mt-3 border-b py-4'>
           <div className='space-y-1.5'>
             {secondaryItems.map((item) => (
               <div
@@ -1487,18 +1477,21 @@ export function ModelDetailsContent(props: ModelDetailsContentProps) {
     taskTiers.length === 0
 
   return (
-    <div className='@container/details space-y-4'>
+    <div className='@container/details space-y-6'>
       <ModelHeader model={props.model} />
 
-      <Tabs defaultValue='overview' className='gap-4'>
-        <TabsList className='bg-muted/60 grid w-full grid-cols-3 gap-1 rounded-lg p-1 group-data-horizontal/tabs:h-auto'>
+      <Tabs defaultValue='overview' className='gap-7'>
+        <TabsList
+          variant='line'
+          className='border-border w-full justify-start gap-6 border-b p-0 pb-2 group-data-horizontal/tabs:h-auto'
+        >
           {TAB_VALUES.map((value) => {
             const Icon = TAB_META[value].icon
             return (
               <TabsTrigger
                 key={value}
                 value={value}
-                className='h-8 min-w-0 gap-1.5 rounded-md px-3 text-xs sm:text-sm'
+                className='h-9 min-w-0 flex-none gap-2 rounded-none px-0 text-xs sm:text-sm'
               >
                 <Icon className='size-3.5' />
                 <span className='truncate'>{t(TAB_META[value].labelKey)}</span>
@@ -1507,10 +1500,10 @@ export function ModelDetailsContent(props: ModelDetailsContentProps) {
           })}
         </TabsList>
 
-        <TabsContent value='overview' className='space-y-6 outline-none'>
+        <TabsContent value='overview' className='space-y-8 outline-none'>
           <OverviewSummaryGrid model={props.model} />
 
-          <section className='bg-card/60 space-y-5 rounded-xl border p-4 shadow-sm'>
+          <section className='space-y-6'>
             <SectionTitle>{t('Pricing')}</SectionTitle>
             {showBasePrices && (
               <PriceSection

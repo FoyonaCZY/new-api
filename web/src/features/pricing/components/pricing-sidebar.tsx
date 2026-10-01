@@ -20,7 +20,6 @@ import { ChevronDown, RotateCcw } from 'lucide-react'
 import { memo, useMemo, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Collapsible,
@@ -85,7 +84,7 @@ function formatGroupRatio(ratio: number | undefined): string | undefined {
   return `x${formatted}`
 }
 
-function FilterChip(props: {
+function FilterOptionRow(props: {
   option: FilterOption
   active: boolean
   onClick: () => void
@@ -93,26 +92,26 @@ function FilterChip(props: {
   return (
     <Button
       type='button'
-      variant={props.active ? 'secondary' : 'outline'}
+      variant='ghost'
       size='sm'
       onClick={props.onClick}
       aria-pressed={props.active}
-      className='h-auto max-w-full gap-1.5 px-2 py-1 text-xs'
+      className={cn(
+        'h-auto min-h-9 w-full justify-start gap-2 rounded-none border-l-2 px-3 py-2 text-left text-xs font-normal',
+        props.active
+          ? 'border-primary bg-primary/5 text-primary font-medium'
+          : 'text-muted-foreground hover:text-foreground border-transparent'
+      )}
       title={props.option.label}
     >
       {props.option.icon && (
         <span className='shrink-0'>{props.option.icon}</span>
       )}
-      <span className='truncate'>{props.option.label}</span>
+      <span className='min-w-0 flex-1 break-words whitespace-normal'>
+        {props.option.label}
+      </span>
       {(props.option.suffix || props.option.count != null) && (
-        <span
-          className={cn(
-            'rounded-md px-1.5 py-0.5 text-[12px]',
-            props.active
-              ? 'bg-background text-foreground'
-              : 'bg-muted text-muted-foreground'
-          )}
-        >
+        <span className='text-muted-foreground shrink-0 font-mono text-[11px] tabular-nums'>
           {props.option.suffix ?? props.option.count}
         </span>
       )}
@@ -124,18 +123,18 @@ function FilterSection(props: FilterSectionProps) {
   return (
     <Collapsible
       defaultOpen
-      className='border-border/70 border-b pb-3 last:border-b-0'
+      className='border-border border-b pb-5 last:border-b-0'
     >
-      <CollapsibleTrigger className='group flex w-full items-center justify-between py-2.5 text-left'>
-        <span className='text-foreground text-sm font-semibold'>
+      <CollapsibleTrigger className='group flex w-full items-center justify-between py-4 text-left'>
+        <span className='text-foreground text-xs font-medium'>
           {props.title}
         </span>
         <ChevronDown className='text-muted-foreground size-4 transition-transform group-data-[panel-open]:rotate-180' />
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className='flex flex-wrap gap-1.5'>
+        <div className='flex flex-col gap-0.5'>
           {props.options.map((option) => (
-            <FilterChip
+            <FilterOptionRow
               key={option.value}
               option={option}
               active={props.value === option.value}
@@ -265,14 +264,9 @@ export const PricingSidebar = memo(function PricingSidebar(
   ]
 
   return (
-    <aside className={cn('bg-card rounded-xl border p-3', props.className)}>
-      <div className='mb-2.5 flex items-center justify-between gap-2'>
-        <div>
-          <h2 className='text-foreground text-sm font-bold'>{t('Filter')}</h2>
-          <p className='text-muted-foreground mt-1 text-xs'>
-            {t('Refine models by provider, group, type, and tags.')}
-          </p>
-        </div>
+    <aside aria-label={t('Filter')} className={cn('min-w-0', props.className)}>
+      <div className='border-border mb-1 flex min-h-14 items-center justify-between gap-2 border-b'>
+        <h2 className='text-foreground text-sm font-medium'>{t('Filter')}</h2>
         <Button
           type='button'
           variant='ghost'
@@ -285,12 +279,6 @@ export const PricingSidebar = memo(function PricingSidebar(
           {t('Reset')}
         </Button>
       </div>
-
-      {props.hasActiveFilters && (
-        <Badge variant='secondary' className='mb-3'>
-          {t('Filters active')}
-        </Badge>
-      )}
 
       <div className='space-y-1'>
         <FilterSection

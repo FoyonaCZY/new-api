@@ -54,14 +54,14 @@ function StatCard(props: {
 }) {
   const Icon = props.icon
   return (
-    <div className='bg-background flex flex-col gap-1 rounded-lg border p-3'>
-      <span className='text-muted-foreground inline-flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase'>
+    <div className='border-border flex min-w-0 flex-col gap-2 border-b py-5 sm:border-b-0 sm:px-4'>
+      <span className='text-muted-foreground inline-flex items-center gap-1.5 text-xs'>
         <Icon className='size-3' />
         {props.label}
       </span>
       <span
         className={cn(
-          'text-foreground font-mono text-lg font-semibold tabular-nums',
+          'text-foreground font-mono text-xl font-medium tabular-nums',
           props.valueClassName
         )}
       >
@@ -174,7 +174,7 @@ export function ModelDetailsPerformance(props: { model: PricingModel }) {
 
   return (
     <div className='flex flex-col gap-4'>
-      <div className='grid grid-cols-1 gap-2 sm:grid-cols-3'>
+      <div className='border-border grid grid-cols-1 border-y sm:grid-cols-3 sm:divide-x'>
         <StatCard
           icon={Timer}
           label='TPS'
@@ -208,7 +208,7 @@ export function ModelDetailsPerformance(props: { model: PricingModel }) {
           description={t('Average latency, TTFT, TPS, and success rate')}
         />
         <StaticDataTable
-          className='rounded-lg'
+          className='rounded-none border-x-0'
           tableClassName='text-sm'
           headerRowClassName={tableStyles.compactHeaderRow}
           data={performances}

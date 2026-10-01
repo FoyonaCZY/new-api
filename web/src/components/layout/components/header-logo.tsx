@@ -27,24 +27,31 @@ interface HeaderLogoProps {
 }
 
 /**
- * Logo component for header with loading state
- * Shows image only when fully loaded for smooth UX
+ * Operator mark or the configured project logo, retaining the shared loading state.
  */
-export function HeaderLogo({
-  src,
-  alt = 'logo',
-  loading,
-  logoLoaded,
-  className,
-}: HeaderLogoProps) {
+export function HeaderLogo(props: HeaderLogoProps) {
+  if (import.meta.env.VITE_SITE_BRAND?.trim() === 'Aelion') {
+    return (
+      <span
+        role='img'
+        aria-label={props.alt || 'Aelion'}
+        className={cn(
+          'aelion-brand-mark block size-6 shrink-0 transition-opacity duration-200',
+          props.loading ? 'opacity-0' : 'opacity-100',
+          props.className
+        )}
+      />
+    )
+  }
+
   return (
     <img
-      src={src}
-      alt={alt}
+      src={props.src}
+      alt={props.alt || 'logo'}
       className={cn(
         'h-6 w-6 rounded-full transition-opacity duration-200',
-        !loading && logoLoaded ? 'opacity-100' : 'opacity-0',
-        className
+        !props.loading && props.logoLoaded ? 'opacity-100' : 'opacity-0',
+        props.className
       )}
     />
   )

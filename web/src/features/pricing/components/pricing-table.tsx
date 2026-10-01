@@ -91,6 +91,7 @@ export function PricingTable(props: PricingTableProps) {
     <div className='space-y-4'>
       <DataTableView
         table={table}
+        containerClassName='rounded-none border-x-0'
         isLoading={isLoading}
         emptyTitle={t('No Models Found')}
         emptyDescription={t('No models match your current filters.')}

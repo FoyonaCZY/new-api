@@ -105,7 +105,7 @@ export function PublicHeader(props: PublicHeaderProps) {
       src={systemLogo}
       loading={loading}
       logoLoaded={logoLoaded}
-      className='size-full rounded-lg object-contain'
+      className='size-full object-contain'
     />
   )
   if (customLogo) logoContent = customLogo
@@ -208,32 +208,25 @@ export function PublicHeader(props: PublicHeaderProps) {
           props.className
         )}
       >
-        <div
-          className={cn(
-            'pointer-events-auto mx-auto transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]',
-            scrolled ? 'max-w-[52rem] px-3 pt-3' : 'max-w-7xl px-4 pt-0 md:px-6'
-          )}
-        >
-          <nav
-            className={cn(
-              'flex items-center justify-between gap-2 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]',
-              scrolled
-                ? 'bg-background/60 ring-border/50 h-12 rounded-2xl pr-1.5 pl-4 shadow-[0_2px_16px_-6px_rgba(0,0,0,0.08),0_0_0_0.5px_rgba(0,0,0,0.02)] ring-[0.5px] backdrop-blur-2xl dark:shadow-[0_2px_16px_-6px_rgba(0,0,0,0.4)]'
-                : 'h-16 px-2'
-            )}
-          >
+        <div className='pointer-events-auto mx-auto max-w-7xl px-4 md:px-6'>
+          <nav className='flex h-16 items-center justify-between gap-3 border-b border-current/15 transition-colors duration-200'>
             {/* Logo */}
             <div className='@container/system-brand flex min-w-0 flex-1 items-center gap-1 lg:min-w-36'>
               <Link
                 to={homeUrl}
                 className='group flex min-w-0 items-center gap-2.5'
               >
-                <div className='flex size-7 shrink-0 items-center justify-center transition-all duration-300 group-hover:scale-105'>
+                <div
+                  aria-hidden='true'
+                  className='flex size-7 shrink-0 items-center justify-center'
+                >
                   {logoContent}
                 </div>
                 <span
                   className='max-w-48 truncate text-sm font-semibold tracking-tight'
-                  title={displaySiteName}
+                  title={
+                    import.meta.env.VITE_SITE_BRAND?.trim() || displaySiteName
+                  }
                 >
                   {loading ? (
                     <Skeleton className='h-4 w-16' />

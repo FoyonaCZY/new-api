@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next'
 
 import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { getLobeIcon } from '@/lib/lobe-icon'
 import { cn } from '@/lib/utils'
 import { useSystemConfigStore } from '@/stores/system-config-store'
@@ -254,11 +253,14 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
   }
 
   return (
-    <Card className='hover:ring-foreground/20 h-full min-w-0 gap-3 transition-colors'>
-      <CardHeader className='flex flex-row items-start gap-3'>
+    <article
+      aria-label={props.model.model_name}
+      className='group/model border-border hover:bg-muted/20 flex h-full min-w-0 flex-col gap-5 border-r border-b p-5 transition-colors sm:p-6'
+    >
+      <header className='flex items-start gap-3'>
         <div
           aria-hidden
-          className='bg-muted/50 flex size-10 shrink-0 items-center justify-center rounded-lg'
+          className='text-foreground flex size-8 shrink-0 items-center justify-center'
         >
           {modelIcon || (
             <span className='text-muted-foreground text-sm font-bold'>
@@ -268,7 +270,7 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
         </div>
         <div className='min-w-0 flex-1'>
           <h3
-            className='line-clamp-2 font-mono text-[15px] leading-snug font-semibold [overflow-wrap:anywhere]'
+            className='line-clamp-2 text-lg leading-snug font-medium tracking-tight [overflow-wrap:anywhere]'
             title={props.model.model_name}
           >
             {props.model.model_name}
@@ -288,8 +290,8 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
           className='size-7'
           iconClassName='size-3.5'
         />
-      </CardHeader>
-      <CardContent className='flex flex-1 flex-col gap-3'>
+      </header>
+      <div className='flex flex-1 flex-col gap-5'>
         <div className='flex min-w-0 flex-col gap-1.5'>
           <p className='text-muted-foreground line-clamp-2 text-[13px] leading-5 break-words'>
             {props.model.description || t('No description available.')}
@@ -315,7 +317,7 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
         <div
           role='group'
           aria-label={t('Pricing')}
-          className='mt-auto flex min-w-0 flex-col gap-1.5'
+          className='border-border/70 mt-auto flex min-w-0 flex-col gap-3 border-t pt-4'
         >
           <ModelBillingModeBadge model={props.model} appearance='caption' />
           {dynamicSummary?.providerCount && (
@@ -380,22 +382,23 @@ export const ModelCard = memo(function ModelCard(props: ModelCardProps) {
             )}
           </dl>
         )}
-      </CardContent>
-      <CardFooter className='mt-auto border-0 bg-transparent pt-0'>
+      </div>
+      <footer className='mt-auto'>
         <ModelPerfBadge
           perf={props.perf}
-          className='border-border/60 border-t pt-2'
+          className='border-border/70 border-t pt-4'
         >
           <Button
             variant='ghost'
             size='sm'
+            className='text-foreground shrink-0 rounded-none px-0 hover:bg-transparent hover:underline'
             onClick={() => props.onClick(props.model.model_name || '')}
           >
             {t('Details')}
             <ChevronRight aria-hidden className='size-3.5' />
           </Button>
         </ModelPerfBadge>
-      </CardFooter>
-    </Card>
+      </footer>
+    </article>
   )
 })

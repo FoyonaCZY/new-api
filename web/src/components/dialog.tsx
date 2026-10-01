@@ -84,7 +84,10 @@ export function Dialog({
         }
       >
         <DialogHeader
-          className={cn('flex-shrink-0 text-start', headerClassName)}
+          className={cn(
+            'flex-shrink-0 border-b pb-4 text-start',
+            headerClassName
+          )}
         >
           <DialogTitle className={titleClassName}>{title}</DialogTitle>
           {description ? (

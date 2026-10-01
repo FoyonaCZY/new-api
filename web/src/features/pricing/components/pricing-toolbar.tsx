@@ -86,8 +86,8 @@ export function PricingToolbar(props: PricingToolbarProps) {
   const sortLabels = getSortLabels(t)
 
   return (
-    <div className='bg-card rounded-xl border p-3'>
-      <div className='flex flex-wrap items-center justify-between gap-3'>
+    <div>
+      <div className='flex min-h-14 flex-wrap items-center justify-between gap-3 pb-4'>
         <div className='flex items-center gap-2'>
           <Button
             type='button'
@@ -112,14 +112,14 @@ export function PricingToolbar(props: PricingToolbarProps) {
             <span>{props.filteredCount === 1 ? t('model') : t('models')}</span>
             {props.totalCount != null &&
               props.filteredCount !== props.totalCount && (
-                <span className='text-muted-foreground/60 text-xs'>
+                <span className='text-muted-foreground text-xs'>
                   / {props.totalCount.toLocaleString()}
                 </span>
               )}
           </div>
         </div>
 
-        <div className='flex min-w-0 flex-wrap items-center gap-2'>
+        <div className='flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2'>
           <ToggleGroup
             value={[props.showRechargePrice ? 'recharge' : 'standard']}
             onValueChange={(values) => {
@@ -127,7 +127,7 @@ export function PricingToolbar(props: PricingToolbarProps) {
                 props.onRechargePriceChange(values[0] === 'recharge')
               }
             }}
-            variant='outline'
+            variant='default'
             size='sm'
             aria-label={t('Price display mode')}
           >
@@ -141,7 +141,7 @@ export function PricingToolbar(props: PricingToolbarProps) {
                 props.onTokenUnitChange(values[0])
               }
             }}
-            variant='outline'
+            variant='default'
             size='sm'
             aria-label={t('Token unit')}
           >
@@ -154,7 +154,7 @@ export function PricingToolbar(props: PricingToolbarProps) {
               render={
                 <Button
                   type='button'
-                  variant='outline'
+                  variant='ghost'
                   size='sm'
                   className='h-8 gap-1.5 px-3 text-xs'
                 />

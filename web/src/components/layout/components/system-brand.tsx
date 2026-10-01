@@ -29,6 +29,8 @@ import { useStatus } from '@/hooks/use-status'
 import { useSystemConfig } from '@/hooks/use-system-config'
 import { cn } from '@/lib/utils'
 
+import { HeaderLogo } from './header-logo'
+
 type SystemBrandProps = {
   defaultName?: string
   defaultVersion?: string
@@ -49,7 +51,7 @@ type SystemBrandProps = {
 export function SystemBrand(props: SystemBrandProps) {
   const { t } = useTranslation()
   const { status } = useStatus()
-  const { logo } = useSystemConfig()
+  const { logo, loading, logoLoaded } = useSystemConfig()
 
   const variant = props.variant ?? 'sidebar'
   const name = status?.system_name || props.defaultName || 'New API'
@@ -66,11 +68,13 @@ export function SystemBrand(props: SystemBrandProps) {
           'hover:bg-accent focus-visible:ring-ring/40 focus-visible:ring-2'
         )}
       >
-        <div className='flex size-5 shrink-0 items-center justify-center overflow-hidden rounded-md'>
-          <img
+        <div className='flex size-6 shrink-0 items-center justify-center'>
+          <HeaderLogo
             src={logo}
             alt={t('Logo')}
-            className='size-full rounded-md object-cover'
+            loading={loading}
+            logoLoaded={logoLoaded}
+            className='size-full object-contain'
           />
         </div>
         <span className='max-w-[12rem] truncate'>
@@ -88,11 +92,13 @@ export function SystemBrand(props: SystemBrandProps) {
           className='hover:text-sidebar-foreground active:text-sidebar-foreground cursor-default hover:bg-transparent active:bg-transparent'
           render={<div />}
         >
-          <div className='flex aspect-square size-8 items-center justify-center overflow-hidden rounded-lg'>
-            <img
+          <div className='flex aspect-square size-8 items-center justify-center'>
+            <HeaderLogo
               src={logo}
               alt={t('Logo')}
-              className='size-full rounded-lg object-cover'
+              loading={loading}
+              logoLoaded={logoLoaded}
+              className='size-full object-contain'
             />
           </div>
           <div className='grid flex-1 text-start text-sm leading-tight group-data-[collapsible=icon]:hidden'>

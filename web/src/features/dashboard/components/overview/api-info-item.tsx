@@ -42,7 +42,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
   const status = props.status
 
   return (
-    <div className='group hover:bg-muted/40 flex items-center justify-between gap-2 px-3 py-2.5 transition-colors sm:gap-3 sm:px-5 sm:py-3'>
+    <div className='group hover:bg-muted/40 flex flex-wrap items-center justify-between gap-3 py-4 transition-colors'>
       <div className='flex min-w-0 flex-1 items-center gap-2 sm:gap-3'>
         <span
           className={cn(
@@ -56,11 +56,11 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             <span className='font-mono text-sm font-semibold'>
               {item.route}
             </span>
-            <span className='text-muted-foreground/60 hidden truncate text-xs md:inline'>
+            <span className='text-muted-foreground hidden truncate text-xs md:inline'>
               {item.description}
             </span>
           </div>
-          <span className='text-muted-foreground/40 truncate font-mono text-xs'>
+          <span className='text-muted-foreground truncate font-mono text-xs'>
             {item.url}
           </span>
         </div>
@@ -100,6 +100,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             disabled={status.testing}
             className='size-7 p-0'
             title={t('Test Latency')}
+            aria-label={t('Test Latency')}
           >
             <Zap
               className={cn('size-3.5', status.testing && 'animate-pulse')}
@@ -112,6 +113,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             onClick={() => openExternalSpeedTest(item.url)}
             className='hidden size-7 p-0 sm:inline-flex'
             title={t('External Speed Test')}
+            aria-label={t('External Speed Test')}
           >
             <Gauge className='size-3.5' />
           </Button>
@@ -131,6 +133,7 @@ export function ApiInfoItemComponent(props: ApiInfoItemProps) {
             size='sm'
             className='hidden size-7 p-0 sm:inline-flex'
             title={t('Open in New Tab')}
+            aria-label={t('Open in New Tab')}
             render={<a href={item.url} target='_blank' rel='noreferrer' />}
           >
             <ExternalLink className='size-3.5' />

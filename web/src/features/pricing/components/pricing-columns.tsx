@@ -75,7 +75,7 @@ export function usePricingColumns(
       accessorKey: 'quota_type',
       header: t('Type'),
       cell: ({ row }) => (
-        <ModelBillingModeBadge model={row.original} className='-ml-1.5' />
+        <ModelBillingModeBadge model={row.original} appearance='caption' />
       ),
       size: 110,
       enableSorting: false,
@@ -123,7 +123,8 @@ export function usePricingColumns(
             {vendorIcon}
             <StatusBadge
               label={model.vendor_name}
-              autoColor={model.vendor_name}
+              type='text'
+              variant='neutral'
               size='sm'
               copyable={false}
             />
@@ -146,7 +147,8 @@ export function usePricingColumns(
               <StatusBadge
                 key={tag}
                 label={tag}
-                autoColor={tag}
+                type='text'
+                variant='neutral'
                 size='sm'
                 copyable={false}
               />
@@ -170,7 +172,8 @@ export function usePricingColumns(
               <StatusBadge
                 key={ep}
                 label={ep}
-                autoColor={ep}
+                type='text'
+                variant='neutral'
                 size='sm'
                 copyable={false}
               />
@@ -191,7 +194,7 @@ export function usePricingColumns(
         return (
           <BadgeListCell
             items={groups.map((group) => (
-              <GroupBadge key={group} group={group} size='sm' />
+              <GroupBadge key={group} group={group} size='sm' type='text' />
             ))}
             tooltipClassName='max-w-[280px] p-2'
           />

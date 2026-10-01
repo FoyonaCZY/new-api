@@ -83,7 +83,7 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
   return (
     <PageFooterProvider container={footerContainer}>
       <Main>
-        <div className='aelion-banner aelion-page-heading shrink-0'>
+        <header className='aelion-banner aelion-page-heading shrink-0'>
           <ArtBackdrop />
           {breadcrumb != null && (
             <div className='mb-2 sm:mb-3'>{breadcrumb}</div>
@@ -100,13 +100,14 @@ export function SectionPageLayout(props: SectionPageLayoutProps) {
                 {title}
               </h2>
             </div>
-            {actions != null && (
-              <div className='aelion-page-actions flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-x-4'>
-                {actions}
-              </div>
-            )}
           </div>
-        </div>
+        </header>
+
+        {actions != null && (
+          <div className='aelion-page-actions flex shrink-0 flex-wrap items-center gap-3'>
+            {actions}
+          </div>
+        )}
 
         <div
           className={

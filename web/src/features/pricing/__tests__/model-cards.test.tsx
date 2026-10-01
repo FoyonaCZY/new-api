@@ -148,6 +148,10 @@ describe('model cards', () => {
       <ModelCard model={pricingModel({ model_name: name })} onClick={onClick} />
     )
     expect(screen.getByRole('heading', { name })).toHaveAttribute('title', name)
+    expect(screen.getByRole('article', { name })).toHaveClass('min-w-0')
+    expect(screen.getByRole('heading', { name })).toHaveClass(
+      '[overflow-wrap:anywhere]'
+    )
     await user.click(screen.getByRole('button', { name: 'Copy model name' }))
     expect(await navigator.clipboard.readText()).toBe(name)
     expect(onClick).not.toHaveBeenCalled()
@@ -165,6 +169,7 @@ describe('model cards', () => {
     expect(within(metrics).getByText('—s')).toBeVisible()
     expect(within(metrics).getByText('—t/s')).toBeVisible()
     expect(within(metrics).queryByText(/100/)).not.toBeInTheDocument()
+    expect(metrics).toHaveClass('flex-wrap')
     expect(
       within(metrics).getByRole('img', {
         name: 'Recent success-rate samples; gray bars indicate missing data.',
@@ -471,7 +476,7 @@ describe('model cards', () => {
     expect(screen.getByRole('heading', { name: 'model-1' })).toBeVisible()
   })
 
-  it('switches the card grid to three columns at the xl breakpoint instead of 2xl', () => {
+  it('keeps two catalog columns beside filters until the wide desktop breakpoint', () => {
     queryClient.setQueryData(['perf-metrics-summary', 24], {
       success: true,
       data: { models: [] },
@@ -484,9 +489,8 @@ describe('model cards', () => {
     const grid = screen
       .getByRole('heading', { name: 'example-model' })
       .closest('.grid')
-    expect(grid).toHaveClass('xl:grid-cols-3')
-    expect(grid).not.toHaveClass('2xl:grid-cols-3')
-    expect(grid).not.toHaveClass('min-[1440px]:grid-cols-3')
+    expect(grid).toHaveClass('grid-cols-1', 'md:grid-cols-2', '2xl:grid-cols-3')
+    expect(grid).not.toHaveClass('xl:grid-cols-3')
   })
 
   it('lights slots 23 and 18 when series has the current hour and five hours earlier', () => {

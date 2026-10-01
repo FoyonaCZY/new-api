@@ -1,0 +1,91 @@
+/*
+Copyright (C) 2023-2026 QuantumNous
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+For commercial licensing, please contact support@quantumnous.com
+*/
+.platform-request-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2rem minmax(0, 1fr) 2rem minmax(0, 1fr);
+  align-items: center;
+  min-height: 17rem;
+}
+
+.platform-flow-connector {
+  position: relative;
+  height: 1px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.platform-flow-connector::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  transform: translateX(-100%);
+  animation: platform-request-trace 3.5s ease-in-out infinite;
+}
+
+.platform-flow-connector:nth-of-type(4)::after {
+  animation-delay: 0.75s;
+}
+
+.platform-sections[data-animation-paused='true']
+  .platform-flow-connector::after {
+  animation-play-state: paused;
+}
+
+.platform-sections[data-animation-paused='false'] .platform-feature-panel {
+  animation: platform-panel-enter 240ms ease-out both;
+}
+
+@keyframes platform-request-trace {
+  0%,
+  12% {
+    transform: translateX(-100%);
+  }
+  68%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes platform-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 479px) {
+  .platform-request-flow {
+    grid-template-columns: minmax(0, 1fr) 0.75rem minmax(
+        0,
+        0.8fr
+      ) 0.75rem minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-flow-connector::after,
+  .platform-feature-panel {
+    animation: none !important;
+  }
+}

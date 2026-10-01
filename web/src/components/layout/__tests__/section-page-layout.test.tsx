@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
@@ -65,14 +66,28 @@ describe('shared page layout', () => {
       screen.getByRole('button', { name: 'Next page' }).closest('main')
     ).toBe(main)
   })
+
+  it('keeps actions outside the artwork and reachable before pagination', async () => {
+    const user = userEvent.setup()
+    render(<PageFixture />)
+    const heading = screen.getByRole('heading', { name: 'Requests' })
+    const refresh = screen.getByRole('button', { name: 'Refresh' })
+    expect(heading.closest('header')).not.toContainElement(refresh)
+    await user.tab()
+    expect(refresh).toHaveFocus()
+    await user.keyboard('{Enter}')
+    expect(screen.getByLabelText('Refresh count')).toHaveTextContent('1')
+    await user.tab()
+    expect(screen.getByRole('button', { name: 'Next page' })).toHaveFocus()
+  })
 })
 
 describe('operator branding', () => {
-  it('retains the configured project name alongside the operator name', () => {
+  it('shows only the configured operator name in the header brand', () => {
     vi.stubEnv('VITE_SITE_BRAND', 'Aelion')
     render(<SiteBrandName name='New API' />)
     expect(screen.getByText('Aelion')).toBeVisible()
-    expect(screen.getByText('New API')).toBeVisible()
+    expect(screen.queryByText('New API')).not.toBeInTheDocument()
   })
 
   it('uses the original brand when no operator is configured', () => {

@@ -62,7 +62,7 @@ export function DataTableView<TData>(props: DataTableViewProps<TData>) {
   return (
     <div
       className={cn(
-        'overflow-hidden rounded-lg border',
+        'border-border overflow-hidden border-y',
         props.containerClassName
       )}
       {...props.containerProps}

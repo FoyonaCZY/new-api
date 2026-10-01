@@ -20,6 +20,7 @@ import { Link } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 
 import { ArtBackdrop } from '@/components/art-backdrop'
+import { HeaderLogo } from '@/components/layout/components/header-logo'
 import { SiteBrandName } from '@/components/site-brand-name'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useSystemConfig } from '@/hooks/use-system-config'
@@ -30,29 +31,31 @@ type AuthLayoutProps = {
 
 export function AuthLayout({ children }: AuthLayoutProps) {
   const { t } = useTranslation()
-  const { systemName, logo, loading } = useSystemConfig()
+  const { systemName, logo, loading, logoLoaded } = useSystemConfig()
 
   return (
     <div className='aelion-auth relative grid max-w-none'>
       <Link
         to='/'
-        className='absolute top-4 left-4 z-10 flex items-center gap-2 transition-opacity hover:opacity-80 sm:top-8 sm:left-8'
+        className='absolute top-4 left-4 z-10 flex max-w-[calc(100%-2rem)] min-w-0 items-center gap-2 transition-opacity hover:opacity-80 sm:top-8 sm:left-8 sm:max-w-[calc(100%-4rem)]'
       >
-        <div className='relative h-8 w-8'>
+        <div className='relative size-8 shrink-0'>
           {loading ? (
             <Skeleton className='absolute inset-0 rounded-full' />
           ) : (
-            <img
+            <HeaderLogo
               src={logo}
               alt={t('Logo')}
-              className='h-8 w-8 rounded-full object-cover'
+              loading={loading}
+              logoLoaded={logoLoaded}
+              className='size-8 object-contain'
             />
           )}
         </div>
         {loading ? (
           <Skeleton className='h-6 w-24' />
         ) : (
-          <h1 className='text-xl font-medium'>
+          <h1 className='min-w-0 truncate text-xl font-medium'>
             <SiteBrandName name={systemName} />
           </h1>
         )}

@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { HelpCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -25,7 +24,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { IconBadge } from '@/components/ui/icon-badge'
 import { Markdown } from '@/components/ui/markdown'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useFAQ } from '@/features/dashboard/hooks/use-status-data'
@@ -39,15 +37,7 @@ export function FAQPanel() {
 
   return (
     <PanelWrapper
-      title={
-        <span className='flex items-center gap-2'>
-          <IconBadge tone='chart-4' size='sm'>
-            <HelpCircle />
-          </IconBadge>
-          {t('FAQ')}
-        </span>
-      }
-      description={t('Answers for common access and billing questions')}
+      title={t('FAQ')}
       loading={loading}
       empty={!list.length}
       emptyMessage={t('No FAQ entries available')}
@@ -55,7 +45,7 @@ export function FAQPanel() {
       contentClassName='p-0'
     >
       <ScrollArea className='h-80'>
-        <Accordion className='w-full px-4 sm:px-5'>
+        <Accordion className='w-full'>
           {list.map((item: FAQItem, idx: number) => {
             const key = item.id ?? `faq-${idx}`
             const value = `item-${key}`
@@ -71,7 +61,7 @@ export function FAQPanel() {
                   </Markdown>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <Markdown className='text-muted-foreground/60 text-sm'>
+                  <Markdown className='text-muted-foreground text-sm'>
                     {item.answer}
                   </Markdown>
                 </AccordionContent>

@@ -151,9 +151,15 @@ export function Pricing() {
 
   if (isLoading) {
     return (
-      <PublicLayout title={t('Model Square')} showMainContainer={false}>
-        <div className='aelion-public-content w-full'>
-          <LoadingSkeleton viewMode={viewMode} />
+      <PublicLayout showMainContainer={false}>
+        <div className='relative'>
+          <header className='aelion-banner aelion-public-title pt-24'>
+            <ArtBackdrop priority />
+            <h1>{t('Model Square')}</h1>
+          </header>
+          <div className='aelion-public-content relative w-full'>
+            <LoadingSkeleton viewMode={viewMode} />
+          </div>
         </div>
       </PublicLayout>
     )
@@ -167,7 +173,7 @@ export function Pricing() {
           <h1>{t('Model Square')}</h1>
         </header>
         <PageTransition className='aelion-public-content relative w-full'>
-          <header className='mb-6 flex flex-wrap items-center justify-between gap-4'>
+          <div className='mb-8'>
             <SearchBar
               value={searchInput}
               onChange={setSearchInput}
@@ -175,11 +181,11 @@ export function Pricing() {
               placeholder={t(
                 'Search model name, provider, endpoint, or tag...'
               )}
-              className='w-full max-w-2xl'
+              className='w-full'
             />
-          </header>
+          </div>
 
-          <div className='grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)]'>
+          <div className='grid gap-8 xl:grid-cols-[210px_minmax(0,1fr)] 2xl:gap-12'>
             <PricingSidebar
               quotaTypeFilter={quotaTypeFilter}
               endpointTypeFilter={endpointTypeFilter}
@@ -198,10 +204,10 @@ export function Pricing() {
               models={models || []}
               hasActiveFilters={hasActiveFilters}
               onClearFilters={clearFilters}
-              className='hover-scrollbar sticky top-20 hidden max-h-[calc(100dvh-6rem)] self-start overflow-y-auto xl:block'
+              className='hover-scrollbar sticky top-20 hidden max-h-[calc(100dvh-6rem)] self-start overflow-y-auto pr-3 xl:block'
             />
 
-            <main className='min-w-0 space-y-4'>
+            <main className='min-w-0'>
               <PricingToolbar
                 filteredCount={filteredModels.length}
                 totalCount={models?.length}

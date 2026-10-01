@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useStatus } from '@/hooks/use-status'
 import { useSystemConfig } from '@/hooks/use-system-config'
+import { useTopNavLinks } from '@/hooks/use-top-nav-links'
 import { cn } from '@/lib/utils'
 
 interface FooterLink {
@@ -59,7 +60,7 @@ function FooterLinkItem(props: { link: FooterLink }) {
         href={props.link.href}
         target='_blank'
         rel='noopener noreferrer'
-        className='text-muted-foreground hover:text-foreground text-sm transition-colors duration-200'
+        className='text-muted-foreground hover:text-primary inline-block py-1 text-sm leading-6 transition-colors duration-200 hover:underline hover:underline-offset-4'
       >
         {label}
       </a>
@@ -69,7 +70,7 @@ function FooterLinkItem(props: { link: FooterLink }) {
   return (
     <Link
       to={props.link.href}
-      className='text-muted-foreground hover:text-foreground text-sm transition-colors duration-200'
+      className='text-muted-foreground hover:text-primary inline-block py-1 text-sm leading-6 transition-colors duration-200 hover:underline hover:underline-offset-4'
     >
       {label}
     </Link>
@@ -126,24 +127,32 @@ function LegalLinks(props: { leadingSeparator?: boolean }) {
 function ProjectAttribution(props: { currentYear: number; inline?: boolean }) {
   const { t } = useTranslation()
   const content = (
-    <span className='text-muted-foreground/45'>
+    <span className='text-muted-foreground'>
       &copy; {props.currentYear}{' '}
       <a
         href='https://github.com/QuantumNous/new-api'
         target='_blank'
         rel='noopener noreferrer'
-        className='text-foreground/70 hover:text-foreground font-medium transition-colors'
+        className='text-foreground hover:text-primary font-medium transition-colors'
       >
         {t('New API')}
       </a>
-      . {t(NEW_API_FOOTER_ATTRIBUTION_KEY)}
+      . {t(NEW_API_FOOTER_ATTRIBUTION_KEY)}{' '}
+      <a
+        href='https://github.com/QuantumNous'
+        target='_blank'
+        rel='noopener noreferrer'
+        className='text-foreground hover:text-primary transition-colors'
+      >
+        QuantumNous
+      </a>
     </span>
   )
   if (props.inline) {
     return content
   }
   return (
-    <div className='text-muted-foreground/45 text-center text-xs sm:text-right'>
+    <div className='text-muted-foreground text-xs leading-6 sm:text-right'>
       {content}
     </div>
   )
@@ -151,6 +160,7 @@ function ProjectAttribution(props: { currentYear: number; inline?: boolean }) {
 
 export function Footer(props: FooterProps) {
   const { t } = useTranslation()
+  const navigationLinks = useTopNavLinks()
   const {
     systemName,
     logo: systemLogo,
@@ -160,6 +170,9 @@ export function Footer(props: FooterProps) {
 
   const displayLogo = systemLogo || props.logo || '/logo.png'
   const displayName = systemName || props.name || 'New API'
+  const operator = import.meta.env.VITE_SITE_BRAND?.trim()
+  const hasOperatorBrand = Boolean(operator && operator !== displayName)
+  const isAelion = operator?.toLowerCase() === 'aelion'
   const isDemoSiteMode = Boolean(demoSiteEnabled)
   const currentYear = new Date().getFullYear()
 
@@ -226,17 +239,17 @@ export function Footer(props: FooterProps) {
     return (
       <footer
         className={cn(
-          'border-border/40 relative z-10 border-t',
+          'border-border bg-background relative z-10 border-t',
           props.className
         )}
       >
-        <div className='mx-auto w-full max-w-6xl px-6 py-5'>
-          <div className='bg-muted/20 border-border/50 flex flex-col items-center justify-between gap-4 rounded-2xl border px-4 py-4 backdrop-blur-sm sm:flex-row sm:px-5'>
+        <div className='mx-auto w-full max-w-[1440px] px-6 py-8 md:px-10'>
+          <div className='flex flex-col justify-between gap-6 sm:flex-row sm:items-center'>
             <div
-              className='custom-footer text-muted-foreground min-w-0 text-center text-sm sm:text-left'
+              className='custom-footer text-muted-foreground min-w-0 text-sm leading-7'
               dangerouslySetInnerHTML={{ __html: footerHtml }}
             />
-            <div className='border-border/60 text-muted-foreground/45 flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t pt-4 text-xs sm:w-auto sm:justify-end sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5'>
+            <div className='border-border text-muted-foreground flex w-full flex-wrap items-center gap-x-4 gap-y-2 border-t pt-5 text-xs leading-6 sm:w-auto sm:max-w-xl sm:justify-end sm:border-t-0 sm:border-l sm:pt-0 sm:pl-6'>
               <LegalLinks />
               <ProjectAttribution currentYear={currentYear} inline />
             </div>
@@ -248,52 +261,92 @@ export function Footer(props: FooterProps) {
 
   return (
     <footer
-      className={cn('border-border/40 relative z-10 border-t', props.className)}
+      className={cn(
+        'border-border bg-background relative z-10 border-t',
+        props.className
+      )}
     >
-      <div className='mx-auto max-w-6xl px-6 py-12 md:py-16'>
-        <div className='flex flex-col justify-between gap-10 md:flex-row md:gap-16'>
+      <div className='mx-auto max-w-[1440px] px-6 pt-12 pb-6 md:px-10 md:pt-20 md:pb-8'>
+        <div className='grid gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-20'>
           {/* Brand column */}
-          <div className='shrink-0'>
-            <Link to='/' className='group flex items-center gap-2.5'>
-              <img
-                src={displayLogo}
-                alt={displayName}
-                className='size-7 rounded-lg object-contain'
-              />
-              <span className='text-sm font-semibold tracking-tight'>
-                {displayName}
+          <div className='min-w-0'>
+            <Link
+              to='/'
+              className='text-foreground inline-flex max-w-full items-center gap-4 sm:gap-6'
+            >
+              {isAelion ? (
+                <span
+                  aria-hidden
+                  className='aelion-brand-mark block size-12 shrink-0 sm:size-16'
+                />
+              ) : (
+                <img
+                  src={displayLogo}
+                  alt=''
+                  aria-hidden
+                  className='size-12 shrink-0 object-contain sm:size-16'
+                />
+              )}
+              <span className='min-w-0 font-serif text-[clamp(3rem,6vw,6.5rem)] leading-none font-medium tracking-[-0.055em] [overflow-wrap:anywhere]'>
+                {operator || displayName}
               </span>
             </Link>
-            <p className='text-muted-foreground/60 mt-3 max-w-[200px] text-xs leading-relaxed'>
+            {hasOperatorBrand && (
+              <div className='text-muted-foreground mt-7 flex items-center gap-2.5 text-sm'>
+                <img
+                  src={displayLogo}
+                  alt=''
+                  aria-hidden
+                  className='size-5 object-contain'
+                />
+                <span>{displayName}</span>
+              </div>
+            )}
+            <p className='text-muted-foreground mt-3 text-sm leading-7'>
               {t('Powerful API Management Platform')}
             </p>
           </div>
 
           {/* Links columns */}
-          {isDemoSiteMode && (
-            <div className='grid grid-cols-3 gap-8 md:gap-16'>
-              {displayColumns.map((column, index) => (
-                <div key={index}>
-                  <p className='text-muted-foreground/50 mb-3 text-xs font-medium tracking-wider uppercase'>
+          <div className='grid grid-cols-2 gap-x-8 gap-y-10 sm:gap-x-12'>
+            {navigationLinks.length > 0 && (
+              <nav aria-label={t('Platform')}>
+                <h2 className='text-foreground mb-4 text-xs font-medium tracking-widest uppercase'>
+                  {t('Platform')}
+                </h2>
+                <ul className='space-y-1'>
+                  {navigationLinks.map((link) => (
+                    <li key={link.href}>
+                      <FooterLinkItem
+                        link={{ text: link.title, href: link.href }}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+            {isDemoSiteMode &&
+              displayColumns.map((column) => (
+                <nav key={column.title} aria-label={t(column.title)}>
+                  <h2 className='text-foreground mb-4 text-xs font-medium tracking-widest uppercase'>
                     {t(column.title)}
-                  </p>
-                  <ul className='space-y-2.5'>
-                    {column.links.map((link, linkIndex) => (
-                      <li key={linkIndex}>
+                  </h2>
+                  <ul className='space-y-1'>
+                    {column.links.map((link) => (
+                      <li key={link.href}>
                         <FooterLinkItem link={link} />
                       </li>
                     ))}
                   </ul>
-                </div>
+                </nav>
               ))}
-            </div>
-          )}
+          </div>
         </div>
 
         {/* Copyright + optional legal links inline on the left, project
             attribution on the right; wraps on narrow screens. */}
-        <div className='border-border/30 mt-12 flex flex-col items-center justify-between gap-x-3 gap-y-2 border-t pt-6 sm:flex-row'>
-          <div className='text-muted-foreground/40 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs sm:justify-start'>
+        <div className='border-border mt-12 flex flex-col justify-between gap-x-10 gap-y-4 border-t pt-6 text-xs md:mt-20 lg:flex-row lg:items-start'>
+          <div className='text-muted-foreground flex flex-wrap items-center gap-x-3 gap-y-2 leading-6'>
             <span>
               &copy; {currentYear} {displayName}.{' '}
               {props.copyright ?? t('footer.defaultCopyright')}

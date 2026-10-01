@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, Flame, ShieldCheck, TrendingDown } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -253,24 +253,55 @@ export function SummaryCards() {
   })
 
   return (
-    <div className='bg-card overflow-hidden rounded-2xl border shadow-xs'>
-      <div className='grid xl:grid-cols-[minmax(0,1fr)_19rem]'>
-        <div className='flex flex-col gap-2.5 p-3 sm:gap-3 sm:p-5'>
-          <div className='flex flex-wrap items-start justify-between gap-3'>
-            <div className='flex flex-col gap-1'>
-              <h3 className='text-sm font-semibold sm:text-base'>
-                {t('Usage at a glance')}
-              </h3>
-              <p className='text-muted-foreground text-xs sm:text-sm'>
-                {t('Monitor balance, usage, and request volume')}
-              </p>
+    <section aria-label={t('Usage')} className='border-b pb-6 sm:pb-8'>
+      <h3 className='mb-6 font-serif text-2xl tracking-tight'>{t('Usage')}</h3>
+      <div className='grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,2.15fr)] xl:gap-10'>
+        <div className='flex min-w-0 flex-col justify-between gap-5 border-b pb-6 xl:border-r xl:border-b-0 xl:pr-10 xl:pb-0'>
+          <div>
+            <div className='flex flex-wrap items-center justify-between gap-3'>
+              <span className='text-muted-foreground text-xs font-medium'>
+                {t('Credit remaining')}
+              </span>
+              <span className='flex items-center gap-1.5'>
+                <span
+                  className={cn('size-1.5 rounded-full', healthCfg.dotClass)}
+                  aria-hidden='true'
+                />
+                <span className='text-muted-foreground text-xs'>
+                  {t(healthCfg.labelKey)}
+                </span>
+              </span>
+            </div>
+            <div className='mt-4 font-serif text-4xl tracking-tight break-all tabular-nums sm:text-5xl'>
+              {formatQuota(remainQuota)}
             </div>
           </div>
-          <StaggerContainer className='grid grid-cols-3 gap-1.5 sm:gap-3'>
+          <div className='flex flex-wrap items-end justify-between gap-4'>
+            <div>
+              <div className='text-muted-foreground text-xs'>{t('Runway')}</div>
+              <div
+                className={cn(
+                  'mt-1 text-sm tabular-nums',
+                  healthLevel === 'critical' && 'text-destructive',
+                  healthLevel === 'caution' && 'text-warning'
+                )}
+              >
+                {runwayDisplay}
+              </div>
+            </div>
+            <Button variant='outline' render={<Link to='/wallet' />}>
+              <span>{t('Wallet')}</span>
+              <ArrowRight data-icon='inline-end' />
+            </Button>
+          </div>
+        </div>
+
+        <div className='min-w-0'>
+          <StaggerContainer className='divide-border/70 grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0'>
             {items.map((it) => (
               <StaggerItem
                 key={it.key}
-                className='bg-background/60 rounded-lg border px-2 py-1.5 sm:rounded-xl sm:p-3'
+                className='min-w-0 py-4 first:pt-0 last:pb-0 sm:px-5 sm:py-0 sm:first:pl-0 sm:last:pr-0'
               >
                 <StatCard
                   title={it.title}
@@ -281,78 +312,12 @@ export function SummaryCards() {
                   sparkline={it.sparkline}
                   sparklineVariant={it.sparklineVariant}
                   loading={loading}
-                  compactMobile
                 />
               </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
-
-        <div className='flex flex-col justify-between gap-3 border-t bg-[linear-gradient(135deg,color-mix(in_oklch,var(--overview-accent-2)_12%,var(--background))_0%,color-mix(in_oklch,oklch(0.82_0.04_155)_8%,var(--background))_48%,color-mix(in_oklch,var(--overview-accent-1)_7%,var(--background))_100%)] p-3 sm:gap-4 sm:p-5 xl:border-t-0 xl:border-l'>
-          <div className='flex flex-col gap-2 sm:gap-3'>
-            <div className='flex items-center justify-between'>
-              <span className='text-muted-foreground text-xs font-medium'>
-                {t('Credit remaining')}
-              </span>
-              <span className='flex items-center gap-1.5'>
-                <span
-                  className={cn('size-1.5 rounded-full', healthCfg.dotClass)}
-                  aria-hidden='true'
-                />
-                <span className='text-muted-foreground text-[11px] font-medium'>
-                  {t(healthCfg.labelKey)}
-                </span>
-              </span>
-            </div>
-
-            <div className='font-mono text-xl font-semibold tracking-tight sm:text-2xl'>
-              {formatQuota(remainQuota)}
-            </div>
-
-            <div className='grid grid-cols-2 gap-2'>
-              <div className='bg-background/60 rounded-lg px-2.5 py-2'>
-                <div className='text-muted-foreground flex items-center gap-1 text-[11px] leading-none font-medium'>
-                  <Flame className='size-3 shrink-0' aria-hidden='true' />
-                  <span className='truncate'>{t('Last 24h usage')}</span>
-                </div>
-                <div className='text-foreground mt-1.5 truncate text-xs font-semibold tabular-nums'>
-                  {formatQuota(recentUsage)}
-                </div>
-              </div>
-              <div className='bg-background/60 rounded-lg px-2.5 py-2'>
-                <div className='text-muted-foreground flex items-center gap-1 text-[11px] leading-none font-medium'>
-                  {runwayDays !== null && runwayDays < 3 ? (
-                    <TrendingDown
-                      className='size-3 shrink-0'
-                      aria-hidden='true'
-                    />
-                  ) : (
-                    <ShieldCheck
-                      className='size-3 shrink-0'
-                      aria-hidden='true'
-                    />
-                  )}
-                  <span className='truncate'>{t('Runway')}</span>
-                </div>
-                <div
-                  className={cn(
-                    'mt-1.5 truncate text-xs font-semibold tabular-nums',
-                    healthLevel === 'critical' && 'text-destructive',
-                    healthLevel === 'caution' && 'text-warning'
-                  )}
-                >
-                  {runwayDisplay}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Button className='justify-between' render={<Link to='/wallet' />}>
-            <span>{t('Wallet')}</span>
-            <ArrowRight data-icon='inline-end' />
-          </Button>
-        </div>
       </div>
-    </div>
+    </section>
   )
 }
